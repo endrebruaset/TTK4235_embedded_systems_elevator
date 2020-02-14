@@ -7,8 +7,8 @@
  * @brief Data structure to be used in @c inside_queue, to keep track of orders from inside the elevator.
  */ 
 typedef struct {
-    int to_floor; ///< Floor 
-    int active;
+    int to_floor; ///< Desired floor of order.
+    int active; ///< 1 if order exist, 0 if not.
 } InsideOrder;
 
 
