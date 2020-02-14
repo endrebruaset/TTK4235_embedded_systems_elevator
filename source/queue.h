@@ -3,8 +3,11 @@
 #define INSIDE_QUEUE_SIZE      HARDWARE_NUMBER_OF_FLOORS
 #define OUTSIDE_QUEUE_SIZE     2*(HARDWARE_NUMBER_OF_FLOORS - 1)
 
+/**
+ * @brief Data structure to be used in @c inside_queue, to keep track of orders from inside the elevator.
+ */ 
 typedef struct {
-    int to_floor;
+    int to_floor; ///< Floor 
     int active;
 } InsideOrder;
 

@@ -1,6 +1,6 @@
 #include "hardware.h"
-
 #include "queue.h"
+#include <stdlib.h>
 
 /**
  * @file
