@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include "hardware.h"
+#include "fsm.h"
 
 static void clear_all_order_lights(){
     HardwareOrder order_types[3] = {
@@ -83,6 +84,36 @@ int main(){
         }
         else{
             hardware_command_stop_light(0);
+        }
+    }
+
+
+    while(1) {
+        switch (current_state)
+        {
+            case MOVING:
+            {
+                in_state_moving();
+                break;
+            }
+            case STAYING:
+            {
+                in_state_staying();
+                break;
+            }
+            case IDLE:
+            {
+                in_state_idle();
+                break;
+            }
+            case EMERGENCY_STOP:
+            {
+                in_state_emergency_stop();
+                break;
+            }
+            default:
+            fprintf(stderr, "Illegal state");
+            exit(1);
         }
     }
     
