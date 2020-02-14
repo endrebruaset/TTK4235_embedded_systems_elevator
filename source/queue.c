@@ -18,7 +18,7 @@ void add_order(int floor, HardwareOrder order_type) {
 
     else {
         for (int i = 0; i < OUTSIDE_QUEUE_SIZE; i++) {
-            if (outside_queue[i].floor == floor && outside_queue[i].direction == order_type) {
+            if (outside_queue[i].from_floor == floor && outside_queue[i].direction == order_type) {
                 outside_queue[i].active = 1;
             }
         }
@@ -49,6 +49,6 @@ int read_orders() {
         }
     }
     
-    return anyOrder;
+    return any_order;
 }
 
