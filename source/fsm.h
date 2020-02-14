@@ -1,7 +1,11 @@
 #include "hardware.h"
+#include <stdio.h>
+#include <stdlib.h>
+
 
 /**
  * @file
+ * @brief Finite state machine that keeps track of which state the elevator is in and the transition between two states. 
  */
 
 typedef enum {
