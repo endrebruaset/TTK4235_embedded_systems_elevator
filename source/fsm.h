@@ -21,10 +21,10 @@ typedef enum {
     EMERGENCY_STOP
 } State;
 
-State current_state;
-HardwareMovement moving_direction;
-HardwareMovement prev_moving_direction;
-int current_floor; // -1 while not on floor
+State g_current_state;
+static HardwareMovement m_moving_direction;
+static HardwareMovement m_prev_moving_direction;
+static int m_current_floor; // -1 while not on floor
 
 /**
  * @brief Executes internal actions while in state @c MOVING.

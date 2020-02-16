@@ -24,32 +24,32 @@ void fsm_in_state_staying() {
     // timer elapses
     hardware_command_door_open(0);
 
-    queue_remove_executed_orders(current_floor);
+    queue_remove_executed_orders(m_current_floor);
     // clear order lights from current_floor
 
     // if empty queue
-    if (!(queue_any_orders_above(current_floor) || queue_any_orders_below(current_floor))) {
+    if (!(queue_any_orders_above(m_current_floor) || queue_any_orders_below(m_current_floor))) {
         transition_to_state(IDLE);
     }
 
     else {
         // last moving down
-        if (prev_moving_direction == HARDWARE_MOVEMENT_DOWN) {
-            if (queue_any_orders_below(current_floor)) {
-                moving_direction = HARDWARE_MOVEMENT_DOWN;
+        if (m_prev_moving_direction == HARDWARE_MOVEMENT_DOWN) {
+            if (queue_any_orders_below(m_current_floor)) {
+                m_moving_direction = HARDWARE_MOVEMENT_DOWN;
             }
             else {
-                moving_direction = HARDWARE_MOVEMENT_UP;
+                m_moving_direction = HARDWARE_MOVEMENT_UP;
             }
         }
 
         // last moving up
-        else if (prev_moving_direction == HARDWARE_MOVEMENT_UP) {
-            if (queue_any_orders_above(current_floor)) {
-                moving_direction = HARDWARE_MOVEMENT_UP;
+        else if (m_prev_moving_direction == HARDWARE_MOVEMENT_UP) {
+            if (queue_any_orders_above(m_current_floor)) {
+                m_moving_direction = HARDWARE_MOVEMENT_UP;
             }
             else {
-                moving_direction = HARDWARE_MOVEMENT_DOWN;
+                m_moving_direction = HARDWARE_MOVEMENT_DOWN;
             }
         }
         transition_to_state(MOVING);
@@ -64,13 +64,13 @@ void fsm_in_state_idle() {
 
     queue_read_orders();
 
-    if (queue_any_orders_below(current_floor)) {
-        moving_direction = HARDWARE_MOVEMENT_DOWN;
+    if (queue_any_orders_below(m_current_floor)) {
+        m_moving_direction = HARDWARE_MOVEMENT_DOWN;
         transition_to_state(MOVING);
     }
 
-    else if (queue_any_orders_above(current_floor)) {
-        moving_direction = HARDWARE_MOVEMENT_UP;
+    else if (queue_any_orders_above(m_current_floor)) {
+        m_moving_direction = HARDWARE_MOVEMENT_UP;
         transition_to_state(MOVING);
     }
 }
@@ -78,7 +78,7 @@ void fsm_in_state_idle() {
 
 // If obstruction switch is activated: keep door open
 void fsm_in_state_emergency_stop() {
-    if (current_floor != -1) {
+    if (m_current_floor != -1) {
         hardware_command_door_open(1);
     }
 
@@ -115,25 +115,25 @@ void fsm_transition_to_state(State next_state) {
         case MOVING:
         {
             // Code for exit action current_state + entry action next_state MOVING
-            current_state = MOVING;
+            g_current_state = MOVING;
             break;
         }
         case STAYING:
         {
             // Code for exit action current_state + entry action next_state STAYING
-            prev_moving_direction = moving_direction;
-            moving_direction = HARDWARE_MOVEMENT_STOP;
-            hardware_command_movement(moving_direction);
+            m_prev_moving_direction = m_moving_direction;
+            m_moving_direction = HARDWARE_MOVEMENT_STOP;
+            hardware_command_movement(m_moving_direction);
 
-            hardware_command_floor_indicator_on(current_floor);
+            hardware_command_floor_indicator_on(m_current_floor);
 
-            current_state = STAYING;
+            g_current_state = STAYING;
             break;
         }
         case IDLE:
         {
             // Code for exit action current_state + entry action next_state IDLE
-            current_state = IDLE;
+            g_current_state = IDLE;
             break;
         }
         case (EMERGENCY_STOP):
@@ -141,13 +141,13 @@ void fsm_transition_to_state(State next_state) {
             // Code for exit action current_state + entry action next_state EMERGENCY_STOP
             hardware_command_stop_light(1); 
 
-            moving_direction = HARDWARE_MOVEMENT_STOP;
-            hardware_command_movement(moving_direction);
+            m_moving_direction = HARDWARE_MOVEMENT_STOP;
+            hardware_command_movement(m_moving_direction);
 
             queue_clear();
             // clear all order lights
 
-            current_state = EMERGENCY_STOP;
+            g_current_state = EMERGENCY_STOP;
             break;
         }
         default:
