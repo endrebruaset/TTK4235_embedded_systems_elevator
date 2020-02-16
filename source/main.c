@@ -91,27 +91,31 @@ int main(){
         {
             case MOVING:
             {
-                in_state_moving();
+                fsm_in_state_moving();
                 break;
             }
+
             case STAYING:
             {
-                in_state_staying();
+                fsm_in_state_staying();
                 break;
             }
+
             case IDLE:
             {
-                in_state_idle();
+                fsm_in_state_idle();
                 break;
             }
+
             case EMERGENCY_STOP:
             {
-                in_state_emergency_stop();
+                fsm_in_state_emergency_stop();
                 break;
             }
+
             default:
-            fprintf(stderr, "Illegal state");
-            exit(1);
+                fprintf(stderr, "Illegal state");
+                exit(1);
         }
     }
     
