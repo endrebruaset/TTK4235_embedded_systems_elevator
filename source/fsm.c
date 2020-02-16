@@ -115,6 +115,10 @@ void fsm_transition_to_state(State next_state) {
         case MOVING:
         {
             // Code for exit action current_state + entry action next_state MOVING
+
+            // not on floor
+            m_current_floor = -1;
+            
             g_current_state = MOVING;
             break;
         }
@@ -160,5 +164,20 @@ void fsm_transition_to_state(State next_state) {
 
 
 void fsm_initialize() { 
+    while (1) {
+        for (int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; f++) {
+            if (hardware_read_floor_sensor(f)) {
+                m_current_floor = f;
 
+                m_moving_direction = HARDWARE_MOVEMENT_STOP;
+                m_prev_moving_direction = HARDWARE_MOVEMENT_DOWN;
+                hardware_command_movement(m_moving_direction);
+
+                g_current_state = IDLE;
+                return;
+            }
+        }
+
+        hardware_command_movement(HARDWARE_MOVEMENT_DOWN);
+    }
 }

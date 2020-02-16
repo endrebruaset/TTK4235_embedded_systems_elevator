@@ -131,4 +131,6 @@ int queue_any_orders_above(int floor) {
             }
         }
     }
+
+    return order_below;
 }
