@@ -6,10 +6,12 @@ void fsm_in_state_moving() {
     if (hardware_read_stop_signal()) {
             transition_to_state(EMERGENCY_STOP);
         }
-        
+
     for (int i = 0; i < HARDWARE_NUMBER_OF_FLOORS; ++i) {
         if (hardware_read_floor_sensor(i)) {
              m_current_floor = i;
+             hardware_command_floor_indicator_on(m_current_floor);
+             // N: Skjønte ikke helt om lysene skrur seg av med en gang den ikke er i en etasje?
 
             if (queue_any_orders_on_floor(i)) {
                 transition_to_state(STAYING);
@@ -39,6 +41,7 @@ void fsm_in_state_staying() {
     hardware_command_door_open(0);
 
     queue_remove_executed_orders(m_current_floor);
+    lights_clear_orders(m_current_floor);
     // clear order lights from current_floor
 
     // if empty queue
@@ -168,7 +171,8 @@ void fsm_transition_to_state(State next_state) {
             m_moving_direction = HARDWARE_MOVEMENT_STOP;
             hardware_command_movement(m_moving_direction);
 
-            hardware_command_floor_indicator_on(m_current_floor);
+            hardware_command_floor_indicator_on(m_current_floor); //N: Trenger vel strengt tatt ikke denne her? Kan vi ikke bare ha denne i
+            // moving?
 
             m_current_state = STAYING;
             break;
@@ -188,6 +192,7 @@ void fsm_transition_to_state(State next_state) {
             hardware_command_movement(m_moving_direction);
 
             queue_clear();
+            lights_clear_all_orders();
             // clear all order lights
 
             m_current_state = EMERGENCY_STOP;
@@ -235,7 +240,13 @@ void fsm_read_orders() {
 
             if (hardware_read_order(f, type)) {
                 queue_add_order(f, type);
+                hardware_command_order_light(f, type, 1);
+                // N: Prøvde å sette order_light her. 
             }
         }
     }
 }
+
+//void fsm_clear_lights() 
+// Ha denne i stedet for egen modul?
+

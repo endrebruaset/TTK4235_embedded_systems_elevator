@@ -1,5 +1,6 @@
 #include "hardware.h"
 #include "queue.h"
+#include "lights.h"
 #include <stdio.h>
 #include <stdlib.h>
 
