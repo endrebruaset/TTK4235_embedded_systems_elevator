@@ -73,10 +73,11 @@ void queue_remove_executed_orders(int floor);
 
 
 /**
- * @brief Polls all order buttons, and adds orders to their respective queues.
+ * @brief Checks if there are any active orders to or from the floor @p floor.
  * 
- */ 
-void queue_read_orders();
+ * @return 1 if there are any active orders, 0 if not.
+ */
+int queue_any_orders_on_floor(int floor);
 
 
 /**
@@ -84,7 +85,7 @@ void queue_read_orders();
  * 
  * @return 1 if there are any active orders below, 0 if not.
  */
-int queue_any_orders_above(int floor);
+int queue_any_orders_above_floor(int floor);
 
 
 /**
@@ -92,6 +93,6 @@ int queue_any_orders_above(int floor);
  * 
  * @return 1 if there are any active orders below, 0 if not.
  */
-int any_orders_below(int floor);
+int any_orders_below_floor(int floor);
 
 #endif

@@ -87,7 +87,7 @@ int main(){
 
 
     while(1) {
-        switch (g_current_state)
+        switch (m_current_state)
         {
             case MOVING:
             {

@@ -25,10 +25,17 @@ typedef enum {
 } State;
 
 
-State g_current_state;
+static State m_current_state;
 static HardwareMovement m_moving_direction;
 static HardwareMovement m_prev_moving_direction;
 static int m_current_floor; // -1 while not on floor
+
+/**
+ * @brief Main program of the project, runs the finite state machine. Implemented in @c main.c.
+ * 
+ * @return 0 on success, truthy integer values if errors occur.
+ */
+int main();
 
 
 /**
@@ -69,5 +76,12 @@ void fsm_transition_to_state(State next_state);
  * all data members depending on floor, then enters state @c IDLE. 
  */
 void fsm_initialize();
+
+
+/**
+ * @brief Polls all order buttons, and adds orders to queue.
+ * 
+ */ 
+void fsm_read_orders();
 
 #endif
