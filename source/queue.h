@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @brief
+ */
+
+
 #include "hardware.h"
 
 
@@ -64,12 +70,14 @@ void queue_add_order(int floor, HardwareOrder order_type);
 
 
 /**
- * @brief Removes all excecuted orders from or to @p floor.
+ * @brief Removes order from @c m_inside_queue or @c m_outside_queue by setting the @c active element \
+ * to a non-truthy value (0) in the order corresponding to the input parameters.
  * 
- * @param floor The floor the elevator stops at to execute orders.
+ * @param floor Desired floor for inside orders, and floor the order is made from for outside orders.
  * 
- */
-void queue_remove_executed_orders(int floor);
+ * @param order_type Type of order.
+ */ 
+void queue_remove_order(int floor, HardwareOrder order_type);
 
 
 /**
@@ -94,5 +102,6 @@ int queue_any_orders_above_floor(int floor);
  * @return 1 if there are any active orders below, 0 if not.
  */
 int any_orders_below_floor(int floor);
+
 
 #endif

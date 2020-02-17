@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @brief
+ */
+
+
 #include "fsm.h"
 
  
@@ -7,13 +13,13 @@ void fsm_in_state_moving() {
             transition_to_state(EMERGENCY_STOP);
         }
 
-    for (int i = 0; i < HARDWARE_NUMBER_OF_FLOORS; ++i) {
-        if (hardware_read_floor_sensor(i)) {
-             m_current_floor = i;
+    for (int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; ++f) {
+        if (hardware_read_floor_sensor(f)) {
+             m_current_floor = f;
              hardware_command_floor_indicator_on(m_current_floor);
              // N: Skjønte ikke helt om lysene skrur seg av med en gang den ikke er i en etasje?
 
-            if (queue_any_orders_on_floor(i)) {
+            if (queue_any_orders_on_floor(f)) {
                 transition_to_state(STAYING);
             }
         }
@@ -28,8 +34,8 @@ void fsm_in_state_staying() {
     // start timer
 
     // while timer has not elapsed
-        fsm_read_orders();
-        // sett ordrelys
+        fsm_read_orders_and_set_order_lights();
+        
         if (hardware_read_stop_signal()) {
             transition_to_state(EMERGENCY_STOP);
         }
@@ -40,8 +46,7 @@ void fsm_in_state_staying() {
     // timer elapses
     hardware_command_door_open(0);
 
-    queue_remove_executed_orders(m_current_floor);
-    lights_clear_orders(m_current_floor);
+    // queue_remove_executed_orders(m_current_floor);
     // clear order lights from current_floor
 
     // if empty queue
@@ -99,7 +104,7 @@ void fsm_in_state_idle() {
         transition_to_state(EMERGENCY_STOP);
     } 
 
-    fsm_read_orders();
+    fsm_read_orders_and_set_order_lights();
 
     // if orders on current floor transition to staying
 
@@ -139,7 +144,7 @@ void fsm_in_state_emergency_stop() {
         if (hardware_read_obstruction_signal()) {
             while (hardware_read_obstruction_signal()){
                 // keep door open
-                fsm_read_orders();
+                fsm_read_orders_and_set_order_lights();
             }
             // restart timer
         }
@@ -169,10 +174,7 @@ void fsm_transition_to_state(State next_state) {
             // Code for exit action current_state + entry action next_state STAYING
             m_prev_moving_direction = m_moving_direction;
             m_moving_direction = HARDWARE_MOVEMENT_STOP;
-            hardware_command_movement(m_moving_direction);
-
-            hardware_command_floor_indicator_on(m_current_floor); //N: Trenger vel strengt tatt ikke denne her? Kan vi ikke bare ha denne i
-            // moving?
+            hardware_command_movement(m_moving_direction); 
 
             m_current_state = STAYING;
             break;
@@ -192,7 +194,7 @@ void fsm_transition_to_state(State next_state) {
             hardware_command_movement(m_moving_direction);
 
             queue_clear();
-            lights_clear_all_orders();
+            lights_clear_all_order_lights();
             // clear all order lights
 
             m_current_state = EMERGENCY_STOP;
@@ -227,26 +229,37 @@ void fsm_initialize() {
 }
 
 
-void fsm_read_orders() {    
+void fsm_read_orders_and_set_order_lights() {    
     HardwareOrder order_types[3] = {
         HARDWARE_ORDER_UP,
         HARDWARE_ORDER_INSIDE,
         HARDWARE_ORDER_DOWN
     };
 
-    for(int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; f++){
-        for(int i = 0; i < 3; i++){
+    for (int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; f++) {
+        for (int i = 0; i < 3; i++) {
             HardwareOrder type = order_types[i];
 
             if (hardware_read_order(f, type)) {
                 queue_add_order(f, type);
-                hardware_command_order_light(f, type, 1);
-                // N: Prøvde å sette order_light her. 
+                hardware_command_order_light(f, type, 1); 
             }
         }
     }
 }
 
-//void fsm_clear_lights() 
-// Ha denne i stedet for egen modul?
+
+void fsm_remove_orders_and_clear_order_lights(int floor) {
+    HardwareOrder order_types[3] = {
+        HARDWARE_ORDER_UP,
+        HARDWARE_ORDER_INSIDE,
+        HARDWARE_ORDER_DOWN
+    };
+
+    for (int i = 0; i < 3; i++) {
+        HardwareOrder type = order_types[i];
+        queue_remove_order(floor, type);
+        hardware_command_order_light(floor, type, 0);
+    }
+}
 

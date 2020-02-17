@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @brief
+ */
+
+
 #include "queue.h"
 
 
@@ -56,16 +62,16 @@ void queue_add_order(int floor, HardwareOrder order_type) {
 }
 
 
-void queue_remove_executed_orders(int floor) {
-    for (int i = 0; i < INSIDE_QUEUE_SIZE; i++) {
-        if (m_inside_queue[i].to_floor == floor) {
-            m_inside_queue[i].active = 0;
-        }
+void queue_remove_order(int floor, HardwareOrder order_type) {
+    if (order_type == HARDWARE_ORDER_INSIDE) {
+        m_inside_queue[floor].active = 0;
     }
 
-    for (int i = 0; i < OUTSIDE_QUEUE_SIZE; i++) {
-        if (m_outside_queue[i].from_floor == floor) {
-            m_outside_queue[i].active = 0;
+    else {
+        for (int i = 0; i < OUTSIDE_QUEUE_SIZE; i++) {
+            if (m_outside_queue[i].from_floor == floor && m_outside_queue[i].direction == order_type) {
+                m_outside_queue[i].active = 0;
+            }
         }
     }
 }
