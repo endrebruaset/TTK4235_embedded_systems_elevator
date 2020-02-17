@@ -48,22 +48,14 @@ void queue_add_order(int floor, HardwareOrder order_type) {
 
     else {
         for (int i = 0; i < OUTSIDE_QUEUE_SIZE; i++) {
-<<<<<<< HEAD
-            if (outside_queue[i].from_floor == floor && outside_queue[i].direction == order_type) {
-                outside_queue[i].active = 1;
-=======
             if (m_outside_queue[i].from_floor == floor && m_outside_queue[i].direction == order_type) {
                 m_outside_queue[i].active = 1;
->>>>>>> origin/master
             }
         }
     }
 }
 
 
-<<<<<<< HEAD
-}  
-=======
 void queue_remove_executed_orders(int floor) {
     for (int i = 0; i < INSIDE_QUEUE_SIZE; i++) {
         if (m_inside_queue[i].to_floor == floor) {
@@ -77,7 +69,6 @@ void queue_remove_executed_orders(int floor) {
         }
     }
 }
->>>>>>> origin/master
 
 
 int queue_any_orders_on_floor(int floor) {
@@ -88,10 +79,6 @@ int queue_any_orders_on_floor(int floor) {
             order_on_floor = 1;
         }
     }
-<<<<<<< HEAD
-    
-    return any_order;
-=======
 
     for (int i = 0; i < OUTSIDE_QUEUE_SIZE; i++) {
         if (m_outside_queue[i].from_floor == floor && m_outside_queue[i].active) {
@@ -119,7 +106,6 @@ int queue_any_orders_above_floor(int floor) {
     }
 
     return order_above;
->>>>>>> origin/master
 }
 
 

@@ -3,8 +3,21 @@
  
 void fsm_in_state_moving() {
     // update current floor
-    // do not update moving direction, do this in transition
+    if (hardware_read_stop_signal()) {
+            transition_to_state(EMERGENCY_STOP);
+        }
+        
+    for (int i = 0; i < HARDWARE_NUMBER_OF_FLOORS; ++i) {
+        if (hardware_read_floor_sensor(i)) {
+             m_current_floor = i;
+
+            if (queue_any_orders_on_floor(i)) {
+                transition_to_state(STAYING);
+            }
+        }
+    }
 }
+
 
 
 // If obstruction switch is activated: keep door open
@@ -141,8 +154,11 @@ void fsm_transition_to_state(State next_state) {
 
             // not on floor
             m_current_floor = -1;
-            
+
+            hardware_command_movement(m_moving_direction);
+
             m_current_state = MOVING;
+
             break;
         }
         case STAYING:
