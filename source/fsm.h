@@ -3,10 +3,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+#ifndef FSM_H
+#define FSM_H
+
+
 /**
  * @file
  * @brief Finite state machine that keeps track of which state the elevator is in and the transition between two states. 
  */
+
 
 /**
  * @brief Possible states is the FSM.
@@ -18,40 +24,64 @@ typedef enum {
     EMERGENCY_STOP
 } State;
 
-State current_state;
-HardwareMovement moving_direction;
-HardwareMovement prev_moving_direction;
-int current_floor; // -1 while not on floor
+
+static State m_current_state;
+static HardwareMovement m_moving_direction;
+static HardwareMovement m_prev_moving_direction;
+static int m_current_floor; // -1 while not on floor
+
+/**
+ * @brief Main program of the project, runs the finite state machine. Implemented in @c main.c.
+ * 
+ * @return 0 on success, truthy integer values if errors occur.
+ */
+int main();
+
 
 /**
  * @brief Executes internal actions while in state @c MOVING.
  */
-void in_state_moving();
+void fsm_in_state_moving();
+
 
 /**
  * @brief Executes internal actions while in state @c STAYING.
  */
-void in_state_staying();
+void fsm_in_state_staying();
+
 
 /**
  * @brief Executes internal actions while in state @c IDLE.
  */
-void in_state_idle();
+void fsm_in_state_idle();
+
 
 /**
  * @brief Executes internal actions while in state @c EMERGENCY_STATE.
  */
-void in_state_emergency_stop();
+void fsm_in_state_emergency_stop();
+
 
 /**
  * @brief Executes exit and entry actions in transition from @c current_state to @p next_state.
  * 
  * @param next_state State being transitioned to.
  */
-void transition_to(State next_state);
+void fsm_transition_to_state(State next_state);
+
 
 /**
- * @brief Initializes the FSM, by moving downwards until a floor is reached.
- * Ignores all orders and commands until it reaches a defined state. Then enters state @c IDLE. 
+ * @brief Initializes the FSM, by moving downwards until a floor is reached. \
+ * Ignores all orders and commands until it reaches a defined state. Sets \
+ * all data members depending on floor, then enters state @c IDLE. 
  */
-void get_to_defined_state();
+void fsm_initialize();
+
+
+/**
+ * @brief Polls all order buttons, and adds orders to queue.
+ * 
+ */ 
+void fsm_read_orders();
+
+#endif

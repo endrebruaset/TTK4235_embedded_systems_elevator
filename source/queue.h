@@ -1,23 +1,27 @@
 #include "hardware.h"
 
+
+#ifndef QUEUE_H
+#define QUEUE_H
 #define INSIDE_QUEUE_SIZE      HARDWARE_NUMBER_OF_FLOORS
 #define OUTSIDE_QUEUE_SIZE     2*(HARDWARE_NUMBER_OF_FLOORS - 1)
 
+
 /**
- * @brief Data structure to be used in @c inside_queue, to keep track of orders from inside the elevator.
+ * @brief Data structure to be used in @c m_inside_queue, to keep track of orders from inside the elevator.
  */ 
 typedef struct {
     int to_floor;       ///< Desired floor of order.
-    int active;         ///< 1 if order exist, 0 if not.
+    int active;         ///< 1 if order exists, 0 if not.
 } InsideOrder;
 
 
 /**
- * @brief Data structure to be used in @c outside_queue, to keep track of orders from outside the elevator.
+ * @brief Data structure to be used in @c m_outside_queue, to keep track of orders from outside the elevator.
  */ 
 typedef struct {
     int from_floor;             ///< Floor the order is made from.
-    int active;                 ///< 1 if order exist, 0 if not.
+    int active;                 ///< 1 if order exists, 0 if not.
     HardwareOrder direction;    ///< Direction of the order.
 } OutsideOrder;
 
@@ -25,45 +29,38 @@ typedef struct {
 /**
  * @brief Queue containing all possible inside orders.
  */ 
-InsideOrder inside_queue[INSIDE_QUEUE_SIZE] =
-    {
-        {0, 0},
-        {1, 0},
-        {2, 0},
-        {3, 0}
-    };
+static InsideOrder m_inside_queue[INSIDE_QUEUE_SIZE];
 
 
 /**
  * @brief Queue containing all possible outside orders.
  */ 
-OutsideOrder outside_queue[OUTSIDE_QUEUE_SIZE] =
-    {
-        {1, 0, HARDWARE_ORDER_DOWN},
-        {2, 0, HARDWARE_ORDER_DOWN},
-        {3, 0, HARDWARE_ORDER_DOWN},
-        {0, 0, HARDWARE_ORDER_UP},
-        {1, 0, HARDWARE_ORDER_UP},
-        {2, 0, HARDWARE_ORDER_UP}
-    };
+static OutsideOrder m_outside_queue[OUTSIDE_QUEUE_SIZE];
 
 
 /**
- * @brief Clears all orders from @c inside_queue and @c outside_queue, by setting the @c active element to an untruthy value (0) 
+ * @brief Initializes @c m_inside_queue and @c m_outside_queue by inserting all possible combinations of \
+ * order types and floors, with the @c active member set to 0.
+ */
+void queue_initialize();
+
+
+/**
+ * @brief Clears all orders from @c m_inside_queue and @c m_outside_queue, by setting the @c active element to an untruthy value (0) \
  * in all the orders.
  */ 
-void clear_queue();
+void queue_clear();
 
 
 /**
- * @brief Adds order to @c inside_queue or @c outside_queue by setting the @c active element
+ * @brief Adds order to @c m_inside_queue or @c m_outside_queue by setting the @c active element \
  * to a truthy value (1) in the order corresponding to the input parameters.
  * 
  * @param floor Desired floor for inside orders, and floor the order is made from for outside orders.
  * 
  * @param order_type Type of order.
  */ 
-void add_order(int floor, HardwareOrder order_type);
+void queue_add_order(int floor, HardwareOrder order_type);
 
 
 /**
@@ -72,13 +69,30 @@ void add_order(int floor, HardwareOrder order_type);
  * @param floor The floor the elevator stops at to execute orders.
  * 
  */
-void remove_executed_orders(int floor);
+void queue_remove_executed_orders(int floor);
+
 
 /**
- * @brief Polls all order buttons, and adds orders to their respective queues.
+ * @brief Checks if there are any active orders to or from the floor @p floor.
  * 
- * @return 1 if any order is added, 0 otherwise.
- */ 
-int read_orders();
+ * @return 1 if there are any active orders, 0 if not.
+ */
+int queue_any_orders_on_floor(int floor);
 
 
+/**
+ * @brief Checks if there are any active orders to or from a floor above @p floor, not including @p floor.
+ * 
+ * @return 1 if there are any active orders below, 0 if not.
+ */
+int queue_any_orders_above_floor(int floor);
+
+
+/**
+ * @brief Checks if there are any active orders to or from a floor below @p floor, not including @p floor.
+ * 
+ * @return 1 if there are any active orders below, 0 if not.
+ */
+int any_orders_below_floor(int floor);
+
+#endif
