@@ -32,7 +32,6 @@ static State m_current_state;
 static HardwareMovement m_moving_direction;
 static HardwareMovement m_prev_moving_direction;
 static int m_current_floor; // -1 while not on floor
-static Timer timer;
 
 /**
  * @brief Main program of the project, runs the finite state machine. Implemented in @c main.c.

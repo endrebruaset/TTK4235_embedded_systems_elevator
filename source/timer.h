@@ -21,24 +21,26 @@ typedef struct {
 
 
 /**
- * @brief Sets @p timer to @p seconds, by setting the timers value to the current timer, \
+ * @brief Timer to be used to time events.
+ */
+static Timer timer;
+
+
+/**
+ * @brief Sets the timer to @p seconds, by setting the timers value to the current time, \
  * and the trigger @p second higher than the timer value.
- * 
- * @param timer The @c Timer object to set.
  * 
  * @param seconds The duration of the timer being set.
  */
-void timer_set(Timer timer, int seconds);
+void timer_set(int seconds);
 
 
 /**
  * @brief Checks if the timer has elapsed, by checking if the current timer value is larger than the the trigger.
  * 
- * @param timer The timer object to be checked.
- * 
  * @return 1 if the timer has elapsed, 0 if not.
  */
-int timer_is_elapsed(Timer timer);
+int timer_is_elapsed();
 
 
 #endif
