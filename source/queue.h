@@ -1,12 +1,10 @@
 /**
  * @file
- * @brief
+ * @brief Module for queueing orders for the elevator.
  */
 
 
 #include "hardware.h"
-#include <stdlib.h>
-#include <stdio.h>
 
 
 #ifndef QUEUE_H
