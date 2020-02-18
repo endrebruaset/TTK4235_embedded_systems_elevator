@@ -3,7 +3,7 @@
  
 void fsm_in_state_moving() {
     if (hardware_read_stop_signal()) {
-            transition_to_state(EMERGENCY_STOP);
+            fsm_transition_to_state(EMERGENCY_STOP);
         }
 
     fsm_read_orders_and_set_order_lights();
@@ -15,7 +15,7 @@ void fsm_in_state_moving() {
             
             if (queue_any_orders_on_floor(f)) {
                 if (queue_check_order(f, m_moving_direction) || queue_check_order(f, HARDWARE_ORDER_INSIDE)) {
-                    transition_to_state(STAYING);
+                    fsm_transition_to_state(STAYING);
                 }
             }
         }
@@ -23,8 +23,6 @@ void fsm_in_state_moving() {
 }
 
 
-
-// If obstruction switch is activated: keep door open
 void fsm_in_state_staying() {
     hardware_command_door_open(1);
     // start timer
@@ -32,7 +30,7 @@ void fsm_in_state_staying() {
 
     while(!(timer_is_elapsed())) {      
         if (hardware_read_stop_signal()) {
-            transition_to_state(EMERGENCY_STOP);
+            fsm_transition_to_state(EMERGENCY_STOP);
         }
 
         fsm_read_orders_and_set_order_lights();
@@ -52,11 +50,11 @@ void fsm_in_state_staying() {
     if (!(queue_any_orders_above_floor(m_current_floor) || 
           queue_any_orders_below_floor(m_current_floor) ||
           queue_any_orders_on_floor(m_current_floor))) {
-        transition_to_state(IDLE);
+        fsm_transition_to_state(IDLE);
     }
 
     else if (queue_any_orders_on_floor(m_current_floor)) {
-        transition_to_state(STAYING);
+        fsm_transition_to_state(STAYING);
     }
 
     else {
@@ -91,7 +89,7 @@ void fsm_in_state_staying() {
                 exit(1);
             }
         }
-        transition_to_state(MOVING);
+        fsm_transition_to_state(MOVING);
     }
 }
 
@@ -100,7 +98,7 @@ void fsm_in_state_idle() {
     // coming from state EMERGENCY_STOP
     while (!timer_is_elapsed()) {
         if (hardware_read_stop_signal()) {
-            transition_to_state(EMERGENCY_STOP);
+            fsm_transition_to_state(EMERGENCY_STOP);
         }
 
         if (hardware_read_obstruction_signal()) {
@@ -120,17 +118,17 @@ void fsm_in_state_idle() {
     fsm_read_orders_and_set_order_lights();
 
     if (queue_any_orders_on_floor(m_current_floor)) {
-        transition_to_state(STAYING);
+        fsm_transition_to_state(STAYING);
     }
 
     if (queue_any_orders_below_floor(m_current_floor)) {
         m_moving_direction = HARDWARE_MOVEMENT_DOWN;
-        transition_to_state(MOVING);
+        fsm_transition_to_state(MOVING);
     }
 
     else if (queue_any_orders_above_floor(m_current_floor)) {
         m_moving_direction = HARDWARE_MOVEMENT_UP;
-        transition_to_state(MOVING);
+        fsm_transition_to_state(MOVING);
     }
 }
 
@@ -149,7 +147,7 @@ void fsm_in_state_emergency_stop() {
         timer_set(DEFAULT_TIME_DOOR_OPEN);
     }
 
-    transition_to_state(IDLE);
+    fsm_transition_to_state(IDLE);
 }
 
 
@@ -256,4 +254,3 @@ void fsm_remove_orders_and_clear_order_lights(int floor) {
         hardware_command_order_light(floor, type, 0);
     }
 }
-

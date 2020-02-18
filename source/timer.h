@@ -23,7 +23,7 @@ typedef struct {
 /**
  * @brief Timer to be used to time events.
  */
-static Timer timer;
+Timer timer;
 
 
 /**

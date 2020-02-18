@@ -5,7 +5,6 @@
 
 
 #include <signal.h>
-#include "hardware.h"
 #include "fsm.h"
 
 

@@ -37,13 +37,13 @@ typedef struct {
 /**
  * @brief Queue containing all possible inside orders.
  */ 
-static InsideOrder m_inside_queue[INSIDE_QUEUE_SIZE];
+InsideOrder m_inside_queue[INSIDE_QUEUE_SIZE];
 
 
 /**
  * @brief Queue containing all possible outside orders.
  */ 
-static OutsideOrder m_outside_queue[OUTSIDE_QUEUE_SIZE];
+OutsideOrder m_outside_queue[OUTSIDE_QUEUE_SIZE];
 
 
 /**
