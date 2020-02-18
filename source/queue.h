@@ -83,7 +83,7 @@ void queue_remove_order(int floor, HardwareOrder order_type);
 /**
  * @brief Checks if there are any active orders to or from the floor @p floor.
  * 
- * @return 1 if there are any active orders, 0 if not.
+ * @return 1 if there are any active orders on @p floor, 0 if not.
  */
 int queue_any_orders_on_floor(int floor);
 
@@ -91,7 +91,7 @@ int queue_any_orders_on_floor(int floor);
 /**
  * @brief Checks if there are any active orders to or from a floor above @p floor, not including @p floor.
  * 
- * @return 1 if there are any active orders below, 0 if not.
+ * @return 1 if there are any active orders above @p floor, 0 if not.
  */
 int queue_any_orders_above_floor(int floor);
 
@@ -99,7 +99,7 @@ int queue_any_orders_above_floor(int floor);
 /**
  * @brief Checks if there are any active orders to or from a floor below @p floor, not including @p floor.
  * 
- * @return 1 if there are any active orders below, 0 if not.
+ * @return 1 if there are any active orders below @p floor, 0 if not.
  */
 int queue_any_orders_below_floor(int floor);
 

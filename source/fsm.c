@@ -19,17 +19,15 @@ void fsm_in_state_moving() {
                     fsm_transition_to_state(STAYING);
                 }
 
-                else if (!queue_any_orders_below_floor(f) && m_moving_direction == HARDWARE_MOVEMENT_DOWN) {
+                if (!queue_any_orders_below_floor(f) && m_moving_direction == HARDWARE_MOVEMENT_DOWN) {
                     fsm_transition_to_state(STAYING);
                 }
 
-                else {
-                    if (queue_check_order(f, m_moving_direction) || queue_check_order(f, HARDWARE_ORDER_INSIDE)) {
+                if (queue_check_order(f, m_moving_direction) || queue_check_order(f, HARDWARE_ORDER_INSIDE)) {
                         fsm_transition_to_state(STAYING);
-                    }
                 }
-            }   
-        }
+            }
+        }   
 
         else {
             m_current_floor = -1;
@@ -68,68 +66,49 @@ void fsm_in_state_staying() {
         fsm_transition_to_state(IDLE);
     }
 
-    else if (queue_any_orders_on_floor(m_current_floor)) {
-        fsm_transition_to_state(STAYING);
-    }
-
     else {
-        switch (m_prev_moving_direction)
-        {
-            case HARDWARE_MOVEMENT_DOWN: 
-            {
-                if (queue_any_orders_below_floor(m_current_floor)) {
-                    m_moving_direction = HARDWARE_MOVEMENT_DOWN;
-                }
-                else {
-                    m_moving_direction = HARDWARE_MOVEMENT_UP;
-                }
-
-                break;
+        if (m_prev_moving_direction == HARDWARE_MOVEMENT_UP) {
+            if (queue_any_orders_above_floor(m_current_floor)) {
+                m_moving_direction = HARDWARE_MOVEMENT_UP;
             }
-
-            case HARDWARE_MOVEMENT_UP: 
-            {
-                if (queue_any_orders_above_floor(m_current_floor)) {
-                    m_moving_direction = HARDWARE_MOVEMENT_UP;
-                }
-                else {
-                    m_moving_direction = HARDWARE_MOVEMENT_DOWN;
-                }
-
-                break;
-            }
-            default:
-            {
-                fprintf(stderr, "Impossible combination of state and m_prev_movement_direction");
-                exit(1);
+            else {
+                m_moving_direction = HARDWARE_MOVEMENT_DOWN;
             }
         }
+        
+        else if (m_prev_moving_direction == HARDWARE_MOVEMENT_DOWN || m_prev_moving_direction == HARDWARE_MOVEMENT_STOP) {
+            if (queue_any_orders_below_floor(m_current_floor)) {
+                m_moving_direction = HARDWARE_MOVEMENT_DOWN;
+            }
+            else {
+                m_moving_direction = HARDWARE_MOVEMENT_UP;
+            }
+        }
+
         fsm_transition_to_state(MOVING);
     }
 }
 
 
 void fsm_in_state_idle() {
-    // coming from state EMERGENCY_STOP
-    while (!timer_is_elapsed()) {
-        if (hardware_read_stop_signal()) {
-            fsm_transition_to_state(EMERGENCY_STOP);
-        }
+    // if last state was EMERGENCY_STOP
+    if (!timer_is_elapsed()) {
+        while (!timer_is_elapsed()) {
+            if (hardware_read_stop_signal()) {
+                fsm_transition_to_state(EMERGENCY_STOP);
+            }
 
-        if (hardware_read_obstruction_signal()) {
-            while (hardware_read_obstruction_signal()){
-                // keep door open
-                fsm_read_orders_and_set_order_lights();
+            if (hardware_read_obstruction_signal()) {
                 timer_set(DEFAULT_TIME_DOOR_OPEN);
             }
+
+            fsm_read_orders_and_set_order_lights();
         }
-
-        fsm_read_orders_and_set_order_lights();
-    }
     
-    hardware_command_door_open(0);
+        hardware_command_door_open(0);
+    }
 
-    // coming from state STAYING
+    // all cases
     if (hardware_read_stop_signal()) {
             fsm_transition_to_state(EMERGENCY_STOP);
     }

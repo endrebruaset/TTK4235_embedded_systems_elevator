@@ -11,6 +11,7 @@
 #define TIME_H
 #define DEFAULT_TIME_DOOR_OPEN 3
 
+
 /**
  * @brief Data structure to be used to time events. Data member @c value represents the current time.
  */
