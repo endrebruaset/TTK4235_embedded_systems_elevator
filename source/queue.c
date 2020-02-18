@@ -1,9 +1,3 @@
-/**
- * @file
- * @brief
- */
-
-
 #include "queue.h"
 
 
@@ -118,7 +112,7 @@ int queue_any_orders_above_floor(int floor) {
 int queue_any_orders_below_floor(int floor) {
     int order_below = 0;
 
-   for (int i = 0; i < INSIDE_QUEUE_SIZE; i++) {
+    for (int i = 0; i < INSIDE_QUEUE_SIZE; i++) {
         if (m_inside_queue[i].to_floor < floor && m_inside_queue[i].active) {
             order_below = 1;
         }
@@ -131,4 +125,22 @@ int queue_any_orders_below_floor(int floor) {
     }
 
     return order_below;
+}
+
+
+int queue_check_order(int floor, HardwareOrder order_type) {
+    if (order_type == HARDWARE_ORDER_INSIDE) {
+        return m_inside_queue[floor].active;
+    }
+
+    else {
+        for (int i = 0; i < OUTSIDE_QUEUE_SIZE; i++) {
+            if (m_outside_queue[i].from_floor == floor && m_outside_queue[i].direction == order_type) {
+                return m_outside_queue[i].active;
+            }
+        }
+    }
+
+    fprintf(stderr, "Unable to transition to next state.\n");
+            exit(1);
 }

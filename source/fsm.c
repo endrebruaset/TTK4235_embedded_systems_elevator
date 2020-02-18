@@ -1,26 +1,22 @@
-/**
- * @file
- * @brief
- */
-
-
 #include "fsm.h"
 
  
 void fsm_in_state_moving() {
-    // update current floor
     if (hardware_read_stop_signal()) {
             transition_to_state(EMERGENCY_STOP);
         }
 
+    fsm_read_orders_and_set_order_lights();
+
     for (int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; ++f) {
         if (hardware_read_floor_sensor(f)) {
-             m_current_floor = f;
-             hardware_command_floor_indicator_on(m_current_floor);
-             // N: Skjønte ikke helt om lysene skrur seg av med en gang den ikke er i en etasje?
-
+            m_current_floor = f;
+            hardware_command_floor_indicator_on(m_current_floor);
+            
             if (queue_any_orders_on_floor(f)) {
-                transition_to_state(STAYING);
+                if (queue_check_order(f, m_moving_direction) || queue_check_order(f, HARDWARE_ORDER_INSIDE)) {
+                    transition_to_state(STAYING);
+                }
             }
         }
     }
@@ -32,22 +28,25 @@ void fsm_in_state_moving() {
 void fsm_in_state_staying() {
     hardware_command_door_open(1);
     // start timer
+    timer_set(DEFAULT_TIME_DOOR_OPEN);
 
-    // while timer has not elapsed
-        fsm_read_orders_and_set_order_lights();
-        
+    while(!(timer_is_elapsed())) {      
         if (hardware_read_stop_signal()) {
             transition_to_state(EMERGENCY_STOP);
         }
+
+        fsm_read_orders_and_set_order_lights();
+
         if (hardware_read_obstruction_signal()) {
             // restart timer
+            timer_set(DEFAULT_TIME_DOOR_OPEN);
         }
+    }
 
     // timer elapses
     hardware_command_door_open(0);
 
-    // queue_remove_executed_orders(m_current_floor);
-    // clear order lights from current_floor
+    fsm_remove_orders_and_clear_order_lights(m_current_floor);
 
     // if empty queue
     if (!(queue_any_orders_above_floor(m_current_floor) || 
@@ -63,7 +62,6 @@ void fsm_in_state_staying() {
     else {
         switch (m_prev_moving_direction)
         {
-            // last moving down
             case HARDWARE_MOVEMENT_DOWN: 
             {
                 if (queue_any_orders_below_floor(m_current_floor)) {
@@ -76,8 +74,7 @@ void fsm_in_state_staying() {
                 break;
             }
 
-            // last moving up
-        case HARDWARE_MOVEMENT_UP: 
+            case HARDWARE_MOVEMENT_UP: 
             {
                 if (queue_any_orders_above_floor(m_current_floor)) {
                     m_moving_direction = HARDWARE_MOVEMENT_UP;
@@ -88,7 +85,7 @@ void fsm_in_state_staying() {
 
                 break;
             }
-        default:
+            default:
             {
                 fprintf(stderr, "Impossible combination of state and m_prev_movement_direction");
                 exit(1);
@@ -100,13 +97,31 @@ void fsm_in_state_staying() {
 
 
 void fsm_in_state_idle() {
-    if (hardware_read_stop_signal()) {
-        transition_to_state(EMERGENCY_STOP);
-    } 
+    // coming from state EMERGENCY_STOP
+    while (!timer_is_elapsed()) {
+        if (hardware_read_stop_signal()) {
+            transition_to_state(EMERGENCY_STOP);
+        }
 
+        if (hardware_read_obstruction_signal()) {
+            while (hardware_read_obstruction_signal()){
+                // keep door open
+                fsm_read_orders_and_set_order_lights();
+                timer_set(DEFAULT_TIME_DOOR_OPEN);
+            }
+        }
+
+        fsm_read_orders_and_set_order_lights();
+    }
+    
+    hardware_command_door_open(0);
+
+    // coming from state STAYING
     fsm_read_orders_and_set_order_lights();
 
-    // if orders on current floor transition to staying
+    if (queue_any_orders_on_floor(m_current_floor)) {
+        transition_to_state(STAYING);
+    }
 
     if (queue_any_orders_below_floor(m_current_floor)) {
         m_moving_direction = HARDWARE_MOVEMENT_DOWN;
@@ -120,7 +135,6 @@ void fsm_in_state_idle() {
 }
 
 
-// If obstruction switch is activated: keep door open
 void fsm_in_state_emergency_stop() {
     if (m_current_floor != -1) {
         hardware_command_door_open(1);
@@ -131,26 +145,11 @@ void fsm_in_state_emergency_stop() {
     }
     hardware_command_stop_light(0); 
 
-    // diskuter om handlingene under bør gjøres i idle, dvs. at man kun er i emergency_stop mens stoppknappen er trykket inne.
-    // husk at timer kan gå på tvers av states.
+    if (m_current_floor != -1) {
+        timer_set(DEFAULT_TIME_DOOR_OPEN);
+    }
 
-    // start timer 3 seconds
-    if (hardware_read_stop_signal()) {
-        // stop timer
-        // state remains emergency_stop
-    }
-    else {
-        // continue timer
-        if (hardware_read_obstruction_signal()) {
-            while (hardware_read_obstruction_signal()){
-                // keep door open
-                fsm_read_orders_and_set_order_lights();
-            }
-            // restart timer
-        }
-        hardware_command_door_open(0);
-        transition_to_state(IDLE);
-    }
+    transition_to_state(IDLE);
 }
 
 
@@ -158,8 +157,6 @@ void fsm_transition_to_state(State next_state) {
     switch(next_state) {
         case MOVING:
         {
-            // Code for exit action current_state + entry action next_state MOVING
-
             // not on floor
             m_current_floor = -1;
 
@@ -171,7 +168,6 @@ void fsm_transition_to_state(State next_state) {
         }
         case STAYING:
         {
-            // Code for exit action current_state + entry action next_state STAYING
             m_prev_moving_direction = m_moving_direction;
             m_moving_direction = HARDWARE_MOVEMENT_STOP;
             hardware_command_movement(m_moving_direction); 
@@ -181,13 +177,11 @@ void fsm_transition_to_state(State next_state) {
         }
         case IDLE:
         {
-            // Code for exit action current_state + entry action next_state IDLE
             m_current_state = IDLE;
             break;
         }
         case (EMERGENCY_STOP):
         {
-            // Code for exit action current_state + entry action next_state EMERGENCY_STOP
             hardware_command_stop_light(1); 
 
             m_moving_direction = HARDWARE_MOVEMENT_STOP;

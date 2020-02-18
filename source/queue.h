@@ -5,6 +5,8 @@
 
 
 #include "hardware.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 
 #ifndef QUEUE_H
@@ -101,7 +103,21 @@ int queue_any_orders_above_floor(int floor);
  * 
  * @return 1 if there are any active orders below, 0 if not.
  */
-int any_orders_below_floor(int floor);
+int queue_any_orders_below_floor(int floor);
+
+/**
+ * @brief Checks if there are any active orders on @p floor of type @p type.
+ * 
+ * @param floor Desired floor to check active orders.
+ * 
+ * @param type Type of order. 
+ * 
+ * @return 1 if the order of type @p type to or from floor @p floor is active, 0 if not.
+ * 
+ * @warning Exits with 1 if the input is invalid.
+ */
+
+int queue_check_order(int floor, HardwareOrder type);
 
 
 #endif

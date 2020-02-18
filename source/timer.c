@@ -1,9 +1,3 @@
-/**
- * @file
- * @brief
- */
-
-
 #include "timer.h"
 
 
