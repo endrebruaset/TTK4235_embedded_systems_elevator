@@ -13,11 +13,26 @@ void fsm_in_state_moving() {
             m_current_floor = f;
             hardware_command_floor_indicator_on(m_current_floor);
             
+
             if (queue_any_orders_on_floor(f)) {
-                if (queue_check_order(f, m_moving_direction) || queue_check_order(f, HARDWARE_ORDER_INSIDE)) {
+                if (!queue_any_orders_above_floor(f) && m_moving_direction == HARDWARE_MOVEMENT_UP) {
                     fsm_transition_to_state(STAYING);
                 }
-            }
+
+                else if (!queue_any_orders_below_floor(f) && m_moving_direction == HARDWARE_MOVEMENT_DOWN) {
+                    fsm_transition_to_state(STAYING);
+                }
+
+                else {
+                    if (queue_check_order(f, m_moving_direction) || queue_check_order(f, HARDWARE_ORDER_INSIDE)) {
+                        fsm_transition_to_state(STAYING);
+                    }
+                }
+            }   
+        }
+
+        else {
+            m_current_floor = -1;
         }
     }
 }
@@ -115,13 +130,17 @@ void fsm_in_state_idle() {
     hardware_command_door_open(0);
 
     // coming from state STAYING
+    if (hardware_read_stop_signal()) {
+            fsm_transition_to_state(EMERGENCY_STOP);
+    }
+
     fsm_read_orders_and_set_order_lights();
 
     if (queue_any_orders_on_floor(m_current_floor)) {
         fsm_transition_to_state(STAYING);
     }
 
-    if (queue_any_orders_below_floor(m_current_floor)) {
+    else if (queue_any_orders_below_floor(m_current_floor)) {
         m_moving_direction = HARDWARE_MOVEMENT_DOWN;
         fsm_transition_to_state(MOVING);
     }
@@ -155,9 +174,6 @@ void fsm_transition_to_state(State next_state) {
     switch(next_state) {
         case MOVING:
         {
-            // not on floor
-            m_current_floor = -1;
-
             hardware_command_movement(m_moving_direction);
 
             m_current_state = MOVING;
@@ -178,7 +194,7 @@ void fsm_transition_to_state(State next_state) {
             m_current_state = IDLE;
             break;
         }
-        case (EMERGENCY_STOP):
+        case EMERGENCY_STOP:
         {
             hardware_command_stop_light(1); 
 
@@ -187,7 +203,6 @@ void fsm_transition_to_state(State next_state) {
 
             queue_clear();
             lights_clear_all_order_lights();
-            // clear all order lights
 
             m_current_state = EMERGENCY_STOP;
             break;
@@ -196,6 +211,7 @@ void fsm_transition_to_state(State next_state) {
         {
             fprintf(stderr, "Unable to transition to next state.\n");
             exit(1);
+            break;
         }
     }
 }
@@ -206,10 +222,15 @@ void fsm_initialize() {
         for (int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; f++) {
             if (hardware_read_floor_sensor(f)) {
                 m_current_floor = f;
+                hardware_command_floor_indicator_on(f);
 
                 m_moving_direction = HARDWARE_MOVEMENT_STOP;
                 m_prev_moving_direction = HARDWARE_MOVEMENT_DOWN;
                 hardware_command_movement(m_moving_direction);
+
+                queue_initialize();
+                timer_set(0);
+                lights_clear_all_order_lights();
 
                 m_current_state = IDLE;
                 return;

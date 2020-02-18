@@ -114,7 +114,7 @@ int queue_any_orders_below_floor(int floor);
  * 
  * @return 1 if the order of type @p type to or from floor @p floor is active, 0 if not.
  * 
- * @warning Exits with 1 if the input is invalid.
+ * @warning Returns with 0 if the input is invalid.
  */
 
 int queue_check_order(int floor, HardwareOrder type);

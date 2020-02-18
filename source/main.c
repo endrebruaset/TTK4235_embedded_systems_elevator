@@ -24,6 +24,11 @@ int main(){
 
     signal(SIGINT, sigint_handler);
 
+
+
+    fsm_initialize();
+    
+    
     while(1) {
         switch (m_current_state)
         {
@@ -56,6 +61,7 @@ int main(){
                 exit(1);
         }
     }
+    
     
 
     return 0;

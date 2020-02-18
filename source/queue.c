@@ -19,9 +19,9 @@ void queue_initialize() {
         m_outside_queue[f] = order;
     }
 
-    for (int f = 1; f < HARDWARE_NUMBER_OF_FLOORS; f++) {
+    for (int f = 0; f < (HARDWARE_NUMBER_OF_FLOORS - 1); f++) {
         OutsideOrder order;
-        order.from_floor = f;
+        order.from_floor = f + 1;
         order.direction = HARDWARE_ORDER_DOWN;
         order.active = 0;
 
@@ -119,7 +119,7 @@ int queue_any_orders_below_floor(int floor) {
     }
 
     for (int i = 0; i < OUTSIDE_QUEUE_SIZE; i++) {
-        if (m_outside_queue[i].from_floor < floor && m_inside_queue[i].active) {
+        if (m_outside_queue[i].from_floor < floor && m_outside_queue[i].active) {
             order_below = 1;
         }
     }
@@ -141,6 +141,5 @@ int queue_check_order(int floor, HardwareOrder order_type) {
         }
     }
 
-    fprintf(stderr, "Unable to transition to next state.\n");
-            exit(1);
+    return 0;
 }
