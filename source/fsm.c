@@ -8,15 +8,14 @@ void fsm_in_state_moving() {
 
     fsm_read_orders_and_set_order_lights();
 
-    for (int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; f++) {
+    for (int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; ++f) {
         if (hardware_read_floor_sensor(f)) {
             m_current_floor = f;
             hardware_command_floor_indicator_on(m_current_floor);
 
-            // set previous floor when floor sensor is detected
             m_prev_floor = m_current_floor;
-            if (m_moving_direction == HARDWARE_MOVEMENT_UP) { m_above_prev_floor = 1; }
-            else if (m_moving_direction == HARDWARE_MOVEMENT_DOWN) { m_above_prev_floor = 0; }
+            if (m_moving_direction == HARDWARE_MOVEMENT_UP) {m_above_prev_floor = 1;}
+            else if (m_moving_direction == HARDWARE_MOVEMENT_DOWN) {m_above_prev_floor = 0;}
 
             break;
         }
@@ -139,28 +138,26 @@ void fsm_in_state_idle() {
     }
 
     else {
-        if (m_above_prev_floor) {
-            if (queue_any_orders_below_floor(m_prev_floor) || queue_any_orders_on_floor(m_prev_floor)) {
+        if (queue_any_orders_on_floor(m_prev_floor)) {
+            if (m_above_prev_floor) { 
                 m_moving_direction = HARDWARE_MOVEMENT_DOWN;
             }
-
-            else if (queue_any_orders_above_floor(m_prev_floor)) {
+            else {
                 m_moving_direction = HARDWARE_MOVEMENT_UP;
             }
+            fsm_transition_to_state(MOVING);
         }
 
-        else {
-            if (queue_any_orders_below_floor(m_prev_floor)) {
-                m_moving_direction = HARDWARE_MOVEMENT_DOWN;
-            }
-
-            else if (queue_any_orders_above_floor(m_prev_floor) || queue_any_orders_on_floor(m_prev_floor)) {
-                m_moving_direction = HARDWARE_MOVEMENT_UP;
-            }
+        else if (queue_any_orders_below_floor(m_prev_floor)) {
+            m_moving_direction = HARDWARE_MOVEMENT_DOWN;
+            fsm_transition_to_state(MOVING);
         }
 
-        fsm_transition_to_state(MOVING);
-
+        else if (queue_any_orders_above_floor(m_prev_floor)) {
+            m_moving_direction = HARDWARE_MOVEMENT_UP;
+            fsm_transition_to_state(MOVING);
+        }
+        
         /*if (m_prev_moving_direction == HARDWARE_MOVEMENT_UP) {
             if (queue_any_orders_below_floor(m_prev_floor) || queue_any_orders_on_floor(m_prev_floor)) {
                 m_moving_direction = HARDWARE_MOVEMENT_DOWN;
@@ -183,10 +180,6 @@ void fsm_in_state_idle() {
                 m_moving_direction = HARDWARE_MOVEMENT_UP;
                 fsm_transition_to_state(MOVING);
             }
-        }
-
-        else {
-            fprintf(stderr, "m_prev_moving_direction is stop in state idle");
         }*/
     }
 }
@@ -223,8 +216,7 @@ void fsm_transition_to_state(State next_state) {
         case STAYING:
         {
             m_prev_moving_direction = m_moving_direction;
-            m_moving_direction = HARDWARE_MOVEMENT_STOP;
-            hardware_command_movement(m_moving_direction); 
+            hardware_command_movement(HARDWARE_MOVEMENT_STOP);
 
             m_current_state = STAYING;
             break;
@@ -239,8 +231,7 @@ void fsm_transition_to_state(State next_state) {
             hardware_command_stop_light(1); 
 
             m_prev_moving_direction = m_moving_direction;
-            m_moving_direction = HARDWARE_MOVEMENT_STOP;
-            hardware_command_movement(m_moving_direction);
+            hardware_command_movement(HARDWARE_MOVEMENT_STOP);
 
             queue_clear();
             lights_clear_all_order_lights();
