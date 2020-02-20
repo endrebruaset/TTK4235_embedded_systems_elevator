@@ -206,8 +206,7 @@ void fsm_transition_to_state(State next_state) {
         case STAYING:
         {
             m_prev_moving_direction = m_moving_direction;
-            m_moving_direction = HARDWARE_MOVEMENT_STOP;
-            hardware_command_movement(m_moving_direction); 
+            hardware_command_movement(HARDWARE_MOVEMENT_STOP);
 
             m_current_state = STAYING;
             break;
@@ -222,8 +221,7 @@ void fsm_transition_to_state(State next_state) {
             hardware_command_stop_light(1); 
 
             m_prev_moving_direction = m_moving_direction;
-            m_moving_direction = HARDWARE_MOVEMENT_STOP;
-            hardware_command_movement(m_moving_direction);
+            hardware_command_movement(HARDWARE_MOVEMENT_STOP);
 
             queue_clear();
             lights_clear_all_order_lights();
