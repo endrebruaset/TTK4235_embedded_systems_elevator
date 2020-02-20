@@ -12,27 +12,39 @@ void fsm_in_state_moving() {
         if (hardware_read_floor_sensor(f)) {
             m_current_floor = f;
             hardware_command_floor_indicator_on(m_current_floor);
-            
 
-            if (queue_any_orders_on_floor(f)) {
-                if (!queue_any_orders_above_floor(f) && m_moving_direction == HARDWARE_MOVEMENT_UP) {
-                    fsm_transition_to_state(STAYING);
-                }
-
-                if (!queue_any_orders_below_floor(f) && m_moving_direction == HARDWARE_MOVEMENT_DOWN) {
-                    fsm_transition_to_state(STAYING);
-                }
-
-                if (queue_check_order(f, m_moving_direction) || queue_check_order(f, HARDWARE_ORDER_INSIDE)) {
-                        fsm_transition_to_state(STAYING);
-                }
+            /*
+            if (m_moving_direction == HARDWARE_MOVEMENT_UP) {
+                m_prev_floor = m_current_floor - 1;
             }
-        }   
+            else{
+                m_prev_floor = m_current_floor + 1;
+            }
+            */
+            m_prev_floor = m_current_floor;
 
+            break;
+        }
         else {
             m_current_floor = -1;
         }
-    }
+    }        
+    
+    if (m_current_floor != -1) {
+        if (queue_any_orders_on_floor(m_current_floor)) {
+            if (!queue_any_orders_above_floor(m_current_floor) && m_moving_direction == HARDWARE_MOVEMENT_UP) {
+                fsm_transition_to_state(STAYING);
+            }
+
+            if (!queue_any_orders_below_floor(m_current_floor) && m_moving_direction == HARDWARE_MOVEMENT_DOWN) {
+                fsm_transition_to_state(STAYING);
+            }
+
+            if (queue_check_order(m_current_floor, m_moving_direction) || queue_check_order(m_current_floor, HARDWARE_ORDER_INSIDE)) {
+                fsm_transition_to_state(STAYING);
+            }
+        }
+    }     
 }
 
 
@@ -115,18 +127,50 @@ void fsm_in_state_idle() {
 
     fsm_read_orders_and_set_order_lights();
 
-    if (queue_any_orders_on_floor(m_current_floor)) {
-        fsm_transition_to_state(STAYING);
+    if (m_current_floor != -1) {
+        if (queue_any_orders_on_floor(m_current_floor)) {
+            fsm_transition_to_state(STAYING);
+        }
+
+        else if (queue_any_orders_below_floor(m_current_floor)) {
+            m_moving_direction = HARDWARE_MOVEMENT_DOWN;
+            fsm_transition_to_state(MOVING);
+        }
+
+        else if (queue_any_orders_above_floor(m_current_floor)) {
+            m_moving_direction = HARDWARE_MOVEMENT_UP;
+            fsm_transition_to_state(MOVING);
+        }
     }
 
-    else if (queue_any_orders_below_floor(m_current_floor)) {
-        m_moving_direction = HARDWARE_MOVEMENT_DOWN;
-        fsm_transition_to_state(MOVING);
-    }
+    else {
+        if (m_prev_moving_direction == HARDWARE_MOVEMENT_UP) {
+            if (queue_any_orders_below_floor(m_prev_floor) || queue_any_orders_on_floor(m_prev_floor)) {
+                m_moving_direction = HARDWARE_MOVEMENT_DOWN;
+                fsm_transition_to_state(MOVING);
+            }
 
-    else if (queue_any_orders_above_floor(m_current_floor)) {
-        m_moving_direction = HARDWARE_MOVEMENT_UP;
-        fsm_transition_to_state(MOVING);
+            else if (queue_any_orders_above_floor(m_prev_floor)) {
+                m_moving_direction = HARDWARE_MOVEMENT_UP;
+                fsm_transition_to_state(MOVING);
+            }
+        }
+
+        else if (m_prev_moving_direction == HARDWARE_MOVEMENT_DOWN) {
+            if (queue_any_orders_below_floor(m_prev_floor)) {
+                m_moving_direction = HARDWARE_MOVEMENT_DOWN;
+                fsm_transition_to_state(MOVING);
+            }
+
+            else if (queue_any_orders_above_floor(m_prev_floor) || queue_any_orders_on_floor(m_prev_floor)) {
+                m_moving_direction = HARDWARE_MOVEMENT_UP;
+                fsm_transition_to_state(MOVING);
+            }
+        }
+
+        else {
+            fprintf(stderr, "m_prev_moving_direction is stop in state idle");
+        }
     }
 }
 
@@ -177,6 +221,7 @@ void fsm_transition_to_state(State next_state) {
         {
             hardware_command_stop_light(1); 
 
+            m_prev_moving_direction = m_moving_direction;
             m_moving_direction = HARDWARE_MOVEMENT_STOP;
             hardware_command_movement(m_moving_direction);
 
