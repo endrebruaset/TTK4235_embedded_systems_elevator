@@ -4,9 +4,6 @@
  */
 
 
-#include "hardware.h"
-
-
 #ifndef LIGHTS_H
 #define LIGHTS_H
 

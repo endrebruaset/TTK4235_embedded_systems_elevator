@@ -1,4 +1,5 @@
 #include "lights.h"
+#include "hardware.h"
 
 
 void lights_clear_all_order_lights(){
