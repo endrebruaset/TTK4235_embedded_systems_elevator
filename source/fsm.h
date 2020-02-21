@@ -1,7 +1,6 @@
 /**
  * @file
- * @brief Finite state machine that keeps track of which state the elevator is in, and performs \
- * the corresponding actions and transition. 
+ * @brief Finite state machine that keeps track of which state the elevator is in, and performs the corresponding actions and transition. 
  */
 
 
@@ -29,12 +28,12 @@ typedef enum {
 } State;
 
 
-State m_current_state;
-HardwareMovement m_moving_direction; ///< The current moving direction. Is not set to HARDWARE_MOVEMENT_STOP when the elevator stops.
-HardwareMovement m_prev_moving_direction; ///< The previous moving direction.
-int m_current_floor; ///< The current floor the elevator is on. Set to FSM_NOT_ON_FLOOR (-1) while not on floor.
-int m_prev_floor; // Last defined floor the elevator was on.
-int m_above_prev_floor; // Truthy value (1) if the elevator is above prev_floor, and a non-truthy value (0) if else.
+State m_current_state; ///< Current state of the FSM.
+HardwareMovement m_moving_direction; ///< Current moving direction. Is not set to HARDWARE_MOVEMENT_STOP when the elevator stops.
+HardwareMovement m_prev_moving_direction; ///< Previous moving direction.
+int m_current_floor; ///< Current floor the elevator is on. Set to FSM_NOT_ON_FLOOR (-1) while not on floor.
+int m_prev_floor; ///< Last defined floor the elevator was on.
+int m_above_prev_floor; ///< Truthy value (1) if the elevator is above prev_floor, and a non-truthy value (0) if else.
 
 
 /**
@@ -97,7 +96,7 @@ void fsm_read_orders_and_set_order_lights();
 /**
  * @brief Removes all executed orders from the queue, and clears the corresponding order lights.
  * 
- * @param floor The floor at which the orders are executed.
+ * @param floor Floor at which the orders are executed.
  */
 void fsm_remove_orders_and_clear_order_lights(int floor);
 

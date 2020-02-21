@@ -13,12 +13,11 @@
 
 
 /**
- * @brief Data structure to be used to time events. Data member @c value represents the current time. \
- * Data member @c trigger represents the limit @c value needs to reach for the timer to elapse.
+ * @brief Data structure to be used to time events.
  */
 typedef struct {
-    time_t value;
-    time_t trigger; 
+    time_t value; ///< The current time.
+    time_t trigger; ///< The limit value needs to reach for the timer to elapse.
 } Timer;
 
 
@@ -26,7 +25,7 @@ Timer timer; ///< Timer to be used to time events.
 
 
 /**
- * @brief Sets the timer to @p seconds, by setting the timers value to the current time, \
+ * @brief Sets the timer to @p seconds, by setting the timers value to the current time,
  * and the trigger @p second higher than the timer value.
  * 
  * @param seconds The duration of the timer being set.
