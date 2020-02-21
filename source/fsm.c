@@ -44,7 +44,7 @@ void fsm_in_state_moving() {
 
 void fsm_in_state_staying() {
     hardware_command_door_open(1);
-    // start timer
+    
     timer_set(DEFAULT_TIME_DOOR_OPEN);
 
     while(!(timer_is_elapsed())) {      
@@ -61,7 +61,6 @@ void fsm_in_state_staying() {
         }
     }
 
-    // timer elapses
     fsm_remove_orders_and_clear_order_lights(m_current_floor);
 
     hardware_command_door_open(0);
