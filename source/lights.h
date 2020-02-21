@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief
+ * @brief Module for commanding lights.
  */
 
 

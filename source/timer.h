@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief 
+ * @brief Module for timing events, spesifically opening the elevator door.
  */
 
 
@@ -13,18 +13,16 @@
 
 
 /**
- * @brief Data structure to be used to time events. Data member @c value represents the current time.
+ * @brief Data structure to be used to time events. Data member @c value represents the current time. \
+ * Data member @c trigger represents the limit @c value needs to reach for the timer to elapse.
  */
 typedef struct {
     time_t value;
-    time_t trigger;
+    time_t trigger; 
 } Timer;
 
 
-/**
- * @brief Timer to be used to time events.
- */
-Timer timer;
+Timer timer; ///< Timer to be used to time events.
 
 
 /**

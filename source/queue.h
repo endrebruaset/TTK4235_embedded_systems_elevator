@@ -9,8 +9,8 @@
 
 #ifndef QUEUE_H
 #define QUEUE_H
-#define INSIDE_QUEUE_SIZE      HARDWARE_NUMBER_OF_FLOORS
-#define OUTSIDE_QUEUE_SIZE     2*(HARDWARE_NUMBER_OF_FLOORS - 1)
+#define QUEUE_INSIDE_QUEUE_SIZE      HARDWARE_NUMBER_OF_FLOORS
+#define QUEUE_OUTSIDE_QUEUE_SIZE     2*(HARDWARE_NUMBER_OF_FLOORS - 1)
 
 
 /**
@@ -35,13 +35,13 @@ typedef struct {
 /**
  * @brief Queue containing all possible inside orders.
  */ 
-InsideOrder m_inside_queue[INSIDE_QUEUE_SIZE];
+InsideOrder m_inside_queue[QUEUE_INSIDE_QUEUE_SIZE];
 
 
 /**
  * @brief Queue containing all possible outside orders.
  */ 
-OutsideOrder m_outside_queue[OUTSIDE_QUEUE_SIZE];
+OutsideOrder m_outside_queue[QUEUE_OUTSIDE_QUEUE_SIZE];
 
 
 /**
@@ -52,8 +52,8 @@ void queue_initialize();
 
 
 /**
- * @brief Clears all orders from @c m_inside_queue and @c m_outside_queue, by setting the @c active element to an untruthy value (0) \
- * in all the orders.
+ * @brief Clears all orders from @c m_inside_queue and @c m_outside_queue, by setting the @c active element to \
+ * an untruthy value (0) in all the orders.
  */ 
 void queue_clear();
 
@@ -83,6 +83,8 @@ void queue_remove_order(int floor, HardwareOrder order_type);
 /**
  * @brief Checks if there are any active orders to or from the floor @p floor.
  * 
+ * @param floor Floor to check for order.
+ * 
  * @return 1 if there are any active orders on @p floor, 0 if not.
  */
 int queue_any_orders_on_floor(int floor);
@@ -90,6 +92,8 @@ int queue_any_orders_on_floor(int floor);
 
 /**
  * @brief Checks if there are any active orders to or from a floor above @p floor, not including @p floor.
+ * 
+ *  @param floor Floor to check for orders.
  * 
  * @return 1 if there are any active orders above @p floor, 0 if not.
  */
@@ -99,20 +103,22 @@ int queue_any_orders_above_floor(int floor);
 /**
  * @brief Checks if there are any active orders to or from a floor below @p floor, not including @p floor.
  * 
+ *  @param floor Floor to check for orders.
+ * 
  * @return 1 if there are any active orders below @p floor, 0 if not.
  */
 int queue_any_orders_below_floor(int floor);
 
 /**
- * @brief Checks if there are any active orders on @p floor of type @p type.
+ * @brief Checks if there is an active order on @p floor of type @p order_type.
  * 
- * @param floor Desired floor to check active orders.
+ * @param floor Floor to check for order.
  * 
- * @param type Type of order. 
+ * @param order_type Type of order. 
  * 
  * @return 1 if the order of type @p type to or from floor @p floor is active, 0 if not.
  * 
- * @warning Returns with 0 if the input is invalid.
+ * @warning Returns 0 if the combination of @p floor and @p order_type is invalid.
  */
 
 int queue_check_order(int floor, HardwareOrder order_type);

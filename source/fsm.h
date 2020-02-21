@@ -19,7 +19,7 @@
 
 
 /**
- * @brief Possible states is the FSM.
+ * @brief All possible states the FSM can be in.
  */
 typedef enum {
     MOVING,
@@ -30,11 +30,11 @@ typedef enum {
 
 
 State m_current_state;
-HardwareMovement m_moving_direction;
-HardwareMovement m_prev_moving_direction;
-int m_current_floor; // -1 while not on floor
-int m_prev_floor; // last defined floor elevator was on
-int m_above_prev_floor; // 1 if above prev_floor, 0 if not.
+HardwareMovement m_moving_direction; ///< The current moving direction. Is not set to HARDWARE_MOVEMENT_STOP when the elevator stops.
+HardwareMovement m_prev_moving_direction; ///< The previous moving direction.
+int m_current_floor; ///< The current floor the elevator is on. Set to FSM_NOT_ON_FLOOR (-1) while not on floor.
+int m_prev_floor; // Last defined floor the elevator was on.
+int m_above_prev_floor; // Truthy value (1) if the elevator is above prev_floor, and a non-truthy value (0) if else.
 
 
 /**
@@ -70,7 +70,7 @@ void fsm_in_state_emergency_stop();
 
 
 /**
- * @brief Executes exit and entry actions in transition from @c current_state to @p next_state.
+ * @brief Executes entry actions in transition from @c m_current_state to @p next_state.
  * 
  * @param next_state State being transitioned to.
  */
@@ -80,7 +80,8 @@ void fsm_transition_to_state(State next_state);
 /**
  * @brief Initializes the FSM, by moving downwards until a floor is reached. \
  * Ignores all orders and commands until it reaches a defined state. Sets \
- * all data members depending on floor, then enters state @c IDLE. 
+ * all data members depending on floor, initializes queue and the timer, \
+ * then enters state @c IDLE. 
  */
 void fsm_initialize();
 

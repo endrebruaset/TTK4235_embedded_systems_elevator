@@ -66,7 +66,7 @@ void fsm_in_state_staying() {
     hardware_command_door_open(0);
 
 
-    // if empty queue
+    // if queue is empty
     if (!(queue_any_orders_above_floor(m_current_floor) || 
           queue_any_orders_below_floor(m_current_floor) ||
           queue_any_orders_on_floor(m_current_floor))) {
@@ -83,7 +83,7 @@ void fsm_in_state_staying() {
             }
         }
         
-        else if (m_prev_moving_direction == HARDWARE_MOVEMENT_DOWN || m_prev_moving_direction == HARDWARE_MOVEMENT_STOP) {
+        else {
             if (queue_any_orders_below_floor(m_current_floor)) {
                 m_moving_direction = HARDWARE_MOVEMENT_DOWN;
             }
@@ -98,7 +98,7 @@ void fsm_in_state_staying() {
 
 
 void fsm_in_state_idle() {
-    // if last state was EMERGENCY_STOP
+    // if door is open, becuase previous state was EMERGENCY_STOP and the elevator is on a floor.
     if (!timer_is_elapsed()) {
         while (!timer_is_elapsed()) {
             if (hardware_read_stop_signal()) {
@@ -107,6 +107,7 @@ void fsm_in_state_idle() {
             }
 
             if (hardware_read_obstruction_signal()) {
+                // restart timer
                 timer_set(DEFAULT_TIME_DOOR_OPEN);
             }
 
@@ -116,7 +117,6 @@ void fsm_in_state_idle() {
         hardware_command_door_open(0);
     }
 
-    // all cases
     if (hardware_read_stop_signal()) {
             fsm_transition_to_state(EMERGENCY_STOP);
     }
