@@ -50,6 +50,7 @@ void fsm_in_state_staying() {
     while(!(timer_is_elapsed())) {      
         if (hardware_read_stop_signal()) {
             fsm_transition_to_state(EMERGENCY_STOP);
+            break;
         }
 
         fsm_read_orders_and_set_order_lights();
@@ -61,9 +62,10 @@ void fsm_in_state_staying() {
     }
 
     // timer elapses
+    fsm_remove_orders_and_clear_order_lights(m_current_floor);
+
     hardware_command_door_open(0);
 
-    fsm_remove_orders_and_clear_order_lights(m_current_floor);
 
     // if empty queue
     if (!(queue_any_orders_above_floor(m_current_floor) || 
@@ -102,6 +104,7 @@ void fsm_in_state_idle() {
         while (!timer_is_elapsed()) {
             if (hardware_read_stop_signal()) {
                 fsm_transition_to_state(EMERGENCY_STOP);
+                break;
             }
 
             if (hardware_read_obstruction_signal()) {
@@ -157,30 +160,6 @@ void fsm_in_state_idle() {
             m_moving_direction = HARDWARE_MOVEMENT_UP;
             fsm_transition_to_state(MOVING);
         }
-        
-        /*if (m_prev_moving_direction == HARDWARE_MOVEMENT_UP) {
-            if (queue_any_orders_below_floor(m_prev_floor) || queue_any_orders_on_floor(m_prev_floor)) {
-                m_moving_direction = HARDWARE_MOVEMENT_DOWN;
-                fsm_transition_to_state(MOVING);
-            }
-
-            else if (queue_any_orders_above_floor(m_prev_floor)) {
-                m_moving_direction = HARDWARE_MOVEMENT_UP;
-                fsm_transition_to_state(MOVING);
-            }
-        }
-
-        else if (m_prev_moving_direction == HARDWARE_MOVEMENT_DOWN) {
-            if (queue_any_orders_below_floor(m_prev_floor)) {
-                m_moving_direction = HARDWARE_MOVEMENT_DOWN;
-                fsm_transition_to_state(MOVING);
-            }
-
-            else if (queue_any_orders_above_floor(m_prev_floor) || queue_any_orders_on_floor(m_prev_floor)) {
-                m_moving_direction = HARDWARE_MOVEMENT_UP;
-                fsm_transition_to_state(MOVING);
-            }
-        }*/
     }
 }
 
@@ -256,9 +235,8 @@ void fsm_initialize() {
                 m_current_floor = f;
                 hardware_command_floor_indicator_on(f);
 
-                m_moving_direction = HARDWARE_MOVEMENT_STOP;
                 m_prev_moving_direction = HARDWARE_MOVEMENT_DOWN;
-                hardware_command_movement(m_moving_direction);
+                hardware_command_movement(HARDWARE_MOVEMENT_STOP);
 
                 queue_initialize();
                 timer_set(0);
