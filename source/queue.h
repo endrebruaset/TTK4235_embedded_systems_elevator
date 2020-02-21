@@ -45,21 +45,21 @@ OutsideOrder m_outside_queue[QUEUE_OUTSIDE_QUEUE_SIZE];
 
 
 /**
- * @brief Initializes @c m_inside_queue and @c m_outside_queue by inserting all possible combinations of \
+ * @brief Initializes @c m_inside_queue and @c m_outside_queue by inserting all possible combinations of
  * order types and floors, with the @c active member set to 0.
  */
 void queue_initialize();
 
 
 /**
- * @brief Clears all orders from @c m_inside_queue and @c m_outside_queue, by setting the @c active element to \
+ * @brief Clears all orders from @c m_inside_queue and @c m_outside_queue, by setting the @c active element to
  * an untruthy value (0) in all the orders.
  */ 
 void queue_clear();
 
 
 /**
- * @brief Adds order to @c m_inside_queue or @c m_outside_queue by setting the @c active element \
+ * @brief Adds order to @c m_inside_queue or @c m_outside_queue by setting the @c active element
  * to a truthy value (1) in the order corresponding to the input parameters.
  * 
  * @param floor Desired floor for inside orders, and floor the order is made from for outside orders.
@@ -70,7 +70,7 @@ void queue_add_order(int floor, HardwareOrder order_type);
 
 
 /**
- * @brief Removes order from @c m_inside_queue or @c m_outside_queue by setting the @c active element \
+ * @brief Removes order from @c m_inside_queue or @c m_outside_queue by setting the @c active element
  * to a non-truthy value (0) in the order corresponding to the input parameters.
  * 
  * @param floor Desired floor for inside orders, and floor the order is made from for outside orders.

@@ -77,16 +77,16 @@ void fsm_transition_to_state(State next_state);
 
 
 /**
- * @brief Initializes the FSM, by moving downwards until a floor is reached. \
- * Ignores all orders and commands until it reaches a defined state. Sets \
- * all data members depending on floor, initializes queue and the timer, \
+ * @brief Initializes the FSM, by moving downwards until a floor is reached.
+ * Ignores all orders and commands until it reaches a defined state. Sets
+ * all data members depending on floor, initializes queue and the timer,
  * then enters state @c IDLE. 
  */
 void fsm_initialize();
 
 
 /**
- * @brief Polls all order buttons, and adds orders to queue. If an order is added, \
+ * @brief Polls all order buttons, and adds orders to queue. If an order is added,
  * the corresponding order light is set.
  * 
  */ 
