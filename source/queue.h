@@ -115,7 +115,7 @@ int queue_any_orders_below_floor(int floor);
  * @warning Returns with 0 if the input is invalid.
  */
 
-int queue_check_order(int floor, HardwareOrder type);
+int queue_check_order(int floor, HardwareOrder order_type);
 
 
 #endif

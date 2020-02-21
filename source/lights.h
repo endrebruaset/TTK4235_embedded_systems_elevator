@@ -5,7 +5,6 @@
 
 
 #include "hardware.h"
-#include "queue.h"
 
 
 #ifndef LIGHTS_H

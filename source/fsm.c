@@ -20,11 +20,11 @@ void fsm_in_state_moving() {
             break;
         }
         else {
-            m_current_floor = -1;
+            m_current_floor = FSM_NOT_ON_FLOOR;
         }
     }        
     
-    if (m_current_floor != -1) {
+    if (m_current_floor != FSM_NOT_ON_FLOOR) {
         if (queue_any_orders_on_floor(m_current_floor)) {
             if (!queue_any_orders_above_floor(m_current_floor) && m_moving_direction == HARDWARE_MOVEMENT_UP) {
                 fsm_transition_to_state(STAYING);
@@ -123,7 +123,7 @@ void fsm_in_state_idle() {
 
     fsm_read_orders_and_set_order_lights();
 
-    if (m_current_floor != -1) {
+    if (m_current_floor != FSM_NOT_ON_FLOOR) {
         if (queue_any_orders_on_floor(m_current_floor)) {
             fsm_transition_to_state(STAYING);
         }
@@ -164,7 +164,7 @@ void fsm_in_state_idle() {
 
 
 void fsm_in_state_emergency_stop() {
-    if (m_current_floor != -1) {
+    if (m_current_floor != FSM_NOT_ON_FLOOR) {
         hardware_command_door_open(1);
     }
 
@@ -173,7 +173,7 @@ void fsm_in_state_emergency_stop() {
     }
     hardware_command_stop_light(0); 
 
-    if (m_current_floor != -1) {
+    if (m_current_floor != FSM_NOT_ON_FLOOR) {
         timer_set(DEFAULT_TIME_DOOR_OPEN);
     }
 
@@ -220,7 +220,7 @@ void fsm_transition_to_state(State next_state) {
         default:
         {
             fprintf(stderr, "Unable to transition to next state.\n");
-            exit(1);
+            exit(3);
             break;
         }
     }
@@ -252,14 +252,14 @@ void fsm_initialize() {
 
 
 void fsm_read_orders_and_set_order_lights() {    
-    HardwareOrder order_types[3] = {
+    HardwareOrder order_types[HARDWARE_NUMBER_OF_ORDER_TYPES] = {
         HARDWARE_ORDER_UP,
         HARDWARE_ORDER_INSIDE,
         HARDWARE_ORDER_DOWN
     };
 
     for (int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; f++) {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < HARDWARE_NUMBER_OF_ORDER_TYPES; i++) {
             HardwareOrder type = order_types[i];
 
             if (hardware_read_order(f, type)) {
@@ -272,13 +272,13 @@ void fsm_read_orders_and_set_order_lights() {
 
 
 void fsm_remove_orders_and_clear_order_lights(int floor) {
-    HardwareOrder order_types[3] = {
+    HardwareOrder order_types[HARDWARE_NUMBER_OF_ORDER_TYPES] = {
         HARDWARE_ORDER_UP,
         HARDWARE_ORDER_INSIDE,
         HARDWARE_ORDER_DOWN
     };
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < HARDWARE_NUMBER_OF_ORDER_TYPES; i++) {
         HardwareOrder type = order_types[i];
         queue_remove_order(floor, type);
         hardware_command_order_light(floor, type, 0);

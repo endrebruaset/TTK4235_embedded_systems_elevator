@@ -15,6 +15,7 @@
 
 #ifndef FSM_H
 #define FSM_H
+#define FSM_NOT_ON_FLOOR -1
 
 
 /**
