@@ -17,7 +17,7 @@
  */
 typedef struct {
     time_t value; ///< The current time.
-    time_t trigger; ///< The limit value needs to reach for the timer to elapse.
+    time_t trigger; ///< The limit the timer needs to reach to elapse.
 } Timer;
 
 
