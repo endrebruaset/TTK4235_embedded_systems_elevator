@@ -28,9 +28,6 @@ typedef enum {
 } State;
 
 
-State g_current_state; ///< Current state of the FSM.
-
-
 /**
  * @brief Main program of the project, runs the finite state machine. Implemented in @c main.c.
  * 

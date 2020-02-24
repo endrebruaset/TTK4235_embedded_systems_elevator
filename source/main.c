@@ -1,11 +1,14 @@
 /**
  * @file
- * @brief
+ * @brief Main program of the FSM implementation, which runs the elevator.
  */
 
 
 #include <signal.h>
 #include "fsm.h"
+
+
+extern State g_current_state; ///< Current state of the FSM.
 
 
 static void sigint_handler(int sig){

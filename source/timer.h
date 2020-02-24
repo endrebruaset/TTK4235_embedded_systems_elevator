@@ -21,9 +21,6 @@ typedef struct {
 } Timer;
 
 
-extern Timer m_timer; ///< Timer to be used to time events.
-
-
 /**
  * @brief Sets the timer to @p seconds, by setting the timers value to the current time,
  * and the trigger @p second higher than the timer value.

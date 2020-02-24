@@ -1,6 +1,9 @@
 #include "timer.h"
 
 
+static Timer m_timer; ///< Timer to be used to time events.
+
+
 void timer_set(int seconds) {
     time(&m_timer.value);
     m_timer.trigger = m_timer.value + seconds;
