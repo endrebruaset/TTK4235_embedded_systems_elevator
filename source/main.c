@@ -29,7 +29,7 @@ int main(){
     
     
     while(1) {
-        switch (m_current_state)
+        switch (g_current_state)
         {
             case MOVING:
             {

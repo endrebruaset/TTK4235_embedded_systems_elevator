@@ -1,4 +1,20 @@
+/**
+ * @file
+ * @brief Implementation of finite state machine that keeps track of which state the elevator is in, and performs the corresponding actions and transition. 
+ */
+
+
 #include "fsm.h"
+
+
+static HardwareMovement m_moving_direction; ///< Current moving direction. Is not set to HARDWARE_MOVEMENT_STOP when the elevator stops.
+static HardwareMovement m_prev_moving_direction; ///< Previous moving direction.
+
+static int m_current_floor; ///< Current floor the elevator is on. Set to FSM_NOT_ON_FLOOR (-1) while not on floor.
+static int m_prev_floor; ///< Last defined floor the elevator was on.
+static int m_above_prev_floor; ///< Truthy value (1) if the elevator is above prev_floor, and a non-truthy value (0) if else.
+
+static Timer m_timer; ///< Timer to be used to time events.
 
  
 void fsm_in_state_moving() {
@@ -187,7 +203,7 @@ void fsm_transition_to_state(State next_state) {
         {
             hardware_command_movement(m_moving_direction);
 
-            m_current_state = MOVING;
+            g_current_state = MOVING;
 
             break;
         }
@@ -196,12 +212,12 @@ void fsm_transition_to_state(State next_state) {
             m_prev_moving_direction = m_moving_direction;
             hardware_command_movement(HARDWARE_MOVEMENT_STOP);
 
-            m_current_state = STAYING;
+            g_current_state = STAYING;
             break;
         }
         case IDLE:
         {
-            m_current_state = IDLE;
+            g_current_state = IDLE;
             break;
         }
         case EMERGENCY_STOP:
@@ -214,7 +230,7 @@ void fsm_transition_to_state(State next_state) {
             queue_clear();
             lights_clear_all_order_lights();
 
-            m_current_state = EMERGENCY_STOP;
+            g_current_state = EMERGENCY_STOP;
             break;
         }
         default:
@@ -241,7 +257,7 @@ void fsm_initialize() {
                 timer_set(0);
                 lights_clear_all_order_lights();
 
-                m_current_state = IDLE;
+                g_current_state = IDLE;
                 return;
             }
         }

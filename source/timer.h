@@ -21,7 +21,7 @@ typedef struct {
 } Timer;
 
 
-Timer timer; ///< Timer to be used to time events.
+extern Timer m_timer; ///< Timer to be used to time events.
 
 
 /**

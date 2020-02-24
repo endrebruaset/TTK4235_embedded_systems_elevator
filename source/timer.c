@@ -2,12 +2,12 @@
 
 
 void timer_set(int seconds) {
-    time(&timer.value);
-    timer.trigger = timer.value + seconds;
+    time(&m_timer.value);
+    m_timer.trigger = m_timer.value + seconds;
 }
 
 
 int timer_is_elapsed() {
-    time(&timer.value);
-    return (timer.value >= timer.trigger);
+    time(&m_timer.value);
+    return (m_timer.value >= m_timer.trigger);
 }

@@ -28,12 +28,7 @@ typedef enum {
 } State;
 
 
-State m_current_state; ///< Current state of the FSM.
-HardwareMovement m_moving_direction; ///< Current moving direction. Is not set to HARDWARE_MOVEMENT_STOP when the elevator stops.
-HardwareMovement m_prev_moving_direction; ///< Previous moving direction.
-int m_current_floor; ///< Current floor the elevator is on. Set to FSM_NOT_ON_FLOOR (-1) while not on floor.
-int m_prev_floor; ///< Last defined floor the elevator was on.
-int m_above_prev_floor; ///< Truthy value (1) if the elevator is above prev_floor, and a non-truthy value (0) if else.
+State g_current_state; ///< Current state of the FSM.
 
 
 /**

@@ -33,18 +33,6 @@ typedef struct {
 
 
 /**
- * @brief Queue containing all possible inside orders.
- */ 
-InsideOrder m_inside_queue[QUEUE_INSIDE_QUEUE_SIZE];
-
-
-/**
- * @brief Queue containing all possible outside orders.
- */ 
-OutsideOrder m_outside_queue[QUEUE_OUTSIDE_QUEUE_SIZE];
-
-
-/**
  * @brief Initializes @c m_inside_queue and @c m_outside_queue by inserting all possible combinations of
  * order types and floors, with the @c active member set to 0.
  */
