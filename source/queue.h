@@ -4,13 +4,22 @@
  */
 
 
-#include "hardware.h"
+#include "queue_constants.h"
 
 
 #ifndef QUEUE_H
 #define QUEUE_H
-#define QUEUE_INSIDE_QUEUE_SIZE      HARDWARE_NUMBER_OF_FLOORS
-#define QUEUE_OUTSIDE_QUEUE_SIZE     2*(HARDWARE_NUMBER_OF_FLOORS - 1)
+
+
+/**
+ * @brief Order type to be used in @c queue_add_order, @c queue_remove_order, and @c queue_check_order.
+ */
+typedef enum {
+    QUEUE_ORDER_UP,
+    QUEUE_ORDER_INSIDE,
+    QUEUE_ORDER_DOWN
+} QueueOrder;
+
 
 
 /**
@@ -28,7 +37,7 @@ typedef struct {
 typedef struct {
     int from_floor;             ///< Floor the order is made from.
     int active;                 ///< 1 if order exists, 0 if not.
-    HardwareOrder direction;    ///< Direction of the order.
+    QueueOrder direction;    ///< Direction of the order.
 } OutsideOrder;
 
 
@@ -54,7 +63,7 @@ void queue_clear();
  * 
  * @param order_type Type of order.
  */ 
-void queue_add_order(int floor, HardwareOrder order_type);
+void queue_add_order(int floor, QueueOrder order_type);
 
 
 /**
@@ -65,7 +74,22 @@ void queue_add_order(int floor, HardwareOrder order_type);
  * 
  * @param order_type Type of order.
  */ 
-void queue_remove_order(int floor, HardwareOrder order_type);
+void queue_remove_order(int floor, QueueOrder order_type);
+
+
+/**
+ * @brief Checks if there is an active order on @p floor of type @p order_type.
+ * 
+ * @param floor Floor to check for order.
+ * 
+ * @param order_type Type of order. 
+ * 
+ * @return 1 if the order of type @p type to or from floor @p floor is active, 0 if not.
+ * 
+ * @warning Returns 0 if the combination of @p floor and @p order_type is invalid.
+ */
+
+int queue_check_order(int floor, QueueOrder order_type);
 
 
 /**
@@ -96,20 +120,6 @@ int queue_any_orders_above_floor(int floor);
  * @return 1 if there are any active orders below @p floor, 0 if not.
  */
 int queue_any_orders_below_floor(int floor);
-
-/**
- * @brief Checks if there is an active order on @p floor of type @p order_type.
- * 
- * @param floor Floor to check for order.
- * 
- * @param order_type Type of order. 
- * 
- * @return 1 if the order of type @p type to or from floor @p floor is active, 0 if not.
- * 
- * @warning Returns 0 if the combination of @p floor and @p order_type is invalid.
- */
-
-int queue_check_order(int floor, HardwareOrder order_type);
 
 
 #endif

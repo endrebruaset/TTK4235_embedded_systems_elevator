@@ -51,8 +51,8 @@ void fsm_in_state_moving() {
                 fsm_transition_to_state(STAYING);
             }
 
-            // m_moving_direction has an enum value corresponding to hardware_order_up or hardware_movement_down
-            if (queue_check_order(m_current_floor, (HardwareOrder) m_moving_direction) || queue_check_order(m_current_floor, HARDWARE_ORDER_INSIDE)) {
+            // m_moving_direction has an enum value corresponding to queue_order_up or queue_order_down
+            if (queue_check_order(m_current_floor, (QueueOrder) m_moving_direction) || queue_check_order(m_current_floor, HARDWARE_ORDER_INSIDE)) {
                 fsm_transition_to_state(STAYING);
             }
         }
@@ -269,18 +269,18 @@ void fsm_initialize() {
 
 
 void fsm_read_orders_and_set_order_lights() {    
-    HardwareOrder order_types[HARDWARE_NUMBER_OF_ORDER_TYPES] = {
+    HardwareOrder order_types[FSM_NUMBER_OF_ORDER_TYPES] = {
         HARDWARE_ORDER_UP,
         HARDWARE_ORDER_INSIDE,
         HARDWARE_ORDER_DOWN
     };
 
     for (int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; f++) {
-        for (int i = 0; i < HARDWARE_NUMBER_OF_ORDER_TYPES; i++) {
+        for (int i = 0; i < FSM_NUMBER_OF_ORDER_TYPES; i++) {
             HardwareOrder type = order_types[i];
 
             if (hardware_read_order(f, type)) {
-                queue_add_order(f, type);
+                queue_add_order(f, (QueueOrder) type);
                 hardware_command_order_light(f, type, 1); 
             }
         }
@@ -289,15 +289,15 @@ void fsm_read_orders_and_set_order_lights() {
 
 
 void fsm_remove_orders_and_clear_order_lights(int floor) {
-    HardwareOrder order_types[HARDWARE_NUMBER_OF_ORDER_TYPES] = {
+    HardwareOrder order_types[FSM_NUMBER_OF_ORDER_TYPES] = {
         HARDWARE_ORDER_UP,
         HARDWARE_ORDER_INSIDE,
         HARDWARE_ORDER_DOWN
     };
 
-    for (int i = 0; i < HARDWARE_NUMBER_OF_ORDER_TYPES; i++) {
+    for (int i = 0; i < FSM_NUMBER_OF_ORDER_TYPES; i++) {
         HardwareOrder type = order_types[i];
-        queue_remove_order(floor, type);
+        queue_remove_order(floor, (QueueOrder) type);
         hardware_command_order_light(floor, type, 0);
     }
 }

@@ -12,7 +12,7 @@ static OutsideOrder m_outside_queue[QUEUE_OUTSIDE_QUEUE_SIZE]; ///< Queue contai
 
 
 void queue_initialize() {
-    for (int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; f++) {
+    for (int f = 0; f < QUEUE_NUMBER_OF_FLOORS; f++) {
         InsideOrder order;
         order.to_floor = f;
         order.active = 0;
@@ -20,19 +20,19 @@ void queue_initialize() {
         m_inside_queue[f] = order;
     }
 
-    for (int f = 0; f < (HARDWARE_NUMBER_OF_FLOORS - 1); f++) {
+    for (int f = 0; f < (QUEUE_NUMBER_OF_FLOORS - 1); f++) {
         OutsideOrder order;
         order.from_floor = f;
-        order.direction = HARDWARE_ORDER_UP;
+        order.direction = QUEUE_ORDER_UP;
         order.active = 0;
 
         m_outside_queue[f] = order;
     }
 
-    for (int f = 0; f < (HARDWARE_NUMBER_OF_FLOORS - 1); f++) {
+    for (int f = 0; f < (QUEUE_NUMBER_OF_FLOORS - 1); f++) {
         OutsideOrder order;
         order.from_floor = f + 1;
-        order.direction = HARDWARE_ORDER_DOWN;
+        order.direction = QUEUE_ORDER_DOWN;
         order.active = 0;
 
         m_outside_queue[f + (QUEUE_OUTSIDE_QUEUE_SIZE / 2)] = order;
@@ -51,8 +51,8 @@ void queue_clear() {
 }
 
 
-void queue_add_order(int floor, HardwareOrder order_type) {
-    if (order_type == HARDWARE_ORDER_INSIDE) {
+void queue_add_order(int floor, QueueOrder order_type) {
+    if (order_type == QUEUE_ORDER_INSIDE) {
         m_inside_queue[floor].active = 1;
     }
 
@@ -66,8 +66,8 @@ void queue_add_order(int floor, HardwareOrder order_type) {
 }
 
 
-void queue_remove_order(int floor, HardwareOrder order_type) {
-    if (order_type == HARDWARE_ORDER_INSIDE) {
+void queue_remove_order(int floor, QueueOrder order_type) {
+    if (order_type == QUEUE_ORDER_INSIDE) {
         m_inside_queue[floor].active = 0;
     }
 
@@ -78,6 +78,23 @@ void queue_remove_order(int floor, HardwareOrder order_type) {
             }
         }
     }
+}
+
+
+int queue_check_order(int floor, QueueOrder order_type) {
+    if (order_type == QUEUE_ORDER_INSIDE) {
+        return m_inside_queue[floor].active;
+    }
+
+    else {
+        for (int i = 0; i < QUEUE_OUTSIDE_QUEUE_SIZE; i++) {
+            if (m_outside_queue[i].from_floor == floor && m_outside_queue[i].direction == order_type) {
+                return m_outside_queue[i].active;
+            }
+        }
+    }
+
+    return 0;
 }
 
 
@@ -135,21 +152,4 @@ int queue_any_orders_below_floor(int floor) {
     }
 
     return order_below;
-}
-
-
-int queue_check_order(int floor, HardwareOrder order_type) {
-    if (order_type == HARDWARE_ORDER_INSIDE) {
-        return m_inside_queue[floor].active;
-    }
-
-    else {
-        for (int i = 0; i < QUEUE_OUTSIDE_QUEUE_SIZE; i++) {
-            if (m_outside_queue[i].from_floor == floor && m_outside_queue[i].direction == order_type) {
-                return m_outside_queue[i].active;
-            }
-        }
-    }
-
-    return 0;
 }
