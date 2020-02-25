@@ -15,6 +15,7 @@
 #ifndef FSM_H
 #define FSM_H
 #define FSM_NOT_ON_FLOOR -1
+#define FSM_DEFAULT_TIME_DOOR_OPEN 3
 
 
 /**

@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @brief Implementation of module for timing events.
+ */
+
+
 #include "timer.h"
 
 

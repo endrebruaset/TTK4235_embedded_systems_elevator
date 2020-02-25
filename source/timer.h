@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief Module for timing events, spesifically opening the elevator door.
+ * @brief Module for timing events.
  */
 
 
@@ -9,7 +9,6 @@
 
 #ifndef TIME_H
 #define TIME_H
-#define DEFAULT_TIME_DOOR_OPEN 3
 
 
 /**

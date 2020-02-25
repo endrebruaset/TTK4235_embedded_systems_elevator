@@ -50,6 +50,7 @@ void fsm_in_state_moving() {
                 fsm_transition_to_state(STAYING);
             }
 
+            // m_moving_direction has an enum value corresponding to hardware_order_up or hardware_movement_down
             if (queue_check_order(m_current_floor, m_moving_direction) || queue_check_order(m_current_floor, HARDWARE_ORDER_INSIDE)) {
                 fsm_transition_to_state(STAYING);
             }
@@ -61,7 +62,7 @@ void fsm_in_state_moving() {
 void fsm_in_state_staying() {
     hardware_command_door_open(1);
     
-    timer_set(DEFAULT_TIME_DOOR_OPEN);
+    timer_set(FSM_DEFAULT_TIME_DOOR_OPEN);
 
     while(!(timer_is_elapsed())) {      
         if (hardware_read_stop_signal()) {
@@ -73,7 +74,7 @@ void fsm_in_state_staying() {
 
         if (hardware_read_obstruction_signal()) {
             // restart timer
-            timer_set(DEFAULT_TIME_DOOR_OPEN);
+            timer_set(FSM_DEFAULT_TIME_DOOR_OPEN);
         }
     }
 
@@ -114,7 +115,7 @@ void fsm_in_state_staying() {
 
 
 void fsm_in_state_idle() {
-    // if door is open, becuase previous state was EMERGENCY_STOP and the elevator is on a floor.
+    // if door is open, becuase previous state was emergency_stop and the elevator is on a floor
     if (!timer_is_elapsed()) {
         while (!timer_is_elapsed()) {
             if (hardware_read_stop_signal()) {
@@ -124,7 +125,7 @@ void fsm_in_state_idle() {
 
             if (hardware_read_obstruction_signal()) {
                 // restart timer
-                timer_set(DEFAULT_TIME_DOOR_OPEN);
+                timer_set(FSM_DEFAULT_TIME_DOOR_OPEN);
             }
 
             fsm_read_orders_and_set_order_lights();
@@ -190,7 +191,7 @@ void fsm_in_state_emergency_stop() {
     hardware_command_stop_light(0); 
 
     if (m_current_floor != FSM_NOT_ON_FLOOR) {
-        timer_set(DEFAULT_TIME_DOOR_OPEN);
+        timer_set(FSM_DEFAULT_TIME_DOOR_OPEN);
     }
 
     fsm_transition_to_state(IDLE);
