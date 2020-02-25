@@ -20,6 +20,7 @@ static int m_above_prev_floor; ///< Truthy value (1) if the elevator is above pr
 void fsm_in_state_moving() {
     if (hardware_read_stop_signal()) {
             fsm_transition_to_state(EMERGENCY_STOP);
+            return;
         }
 
     fsm_read_orders_and_set_order_lights();
@@ -51,7 +52,7 @@ void fsm_in_state_moving() {
             }
 
             // m_moving_direction has an enum value corresponding to hardware_order_up or hardware_movement_down
-            if (queue_check_order(m_current_floor, m_moving_direction) || queue_check_order(m_current_floor, HARDWARE_ORDER_INSIDE)) {
+            if (queue_check_order(m_current_floor, (HardwareOrder) m_moving_direction) || queue_check_order(m_current_floor, HARDWARE_ORDER_INSIDE)) {
                 fsm_transition_to_state(STAYING);
             }
         }
@@ -60,20 +61,17 @@ void fsm_in_state_moving() {
 
 
 void fsm_in_state_staying() {
-    hardware_command_door_open(1);
-    
     timer_set(FSM_DEFAULT_TIME_DOOR_OPEN);
 
     while(!(timer_is_elapsed())) {      
         if (hardware_read_stop_signal()) {
             fsm_transition_to_state(EMERGENCY_STOP);
-            break;
+            return;
         }
 
         fsm_read_orders_and_set_order_lights();
 
         if (hardware_read_obstruction_signal()) {
-            // restart timer
             timer_set(FSM_DEFAULT_TIME_DOOR_OPEN);
         }
     }
@@ -120,11 +118,10 @@ void fsm_in_state_idle() {
         while (!timer_is_elapsed()) {
             if (hardware_read_stop_signal()) {
                 fsm_transition_to_state(EMERGENCY_STOP);
-                break;
+                return;
             }
 
             if (hardware_read_obstruction_signal()) {
-                // restart timer
                 timer_set(FSM_DEFAULT_TIME_DOOR_OPEN);
             }
 
@@ -136,6 +133,7 @@ void fsm_in_state_idle() {
 
     if (hardware_read_stop_signal()) {
             fsm_transition_to_state(EMERGENCY_STOP);
+            return;
     }
 
     fsm_read_orders_and_set_order_lights();
@@ -212,6 +210,8 @@ void fsm_transition_to_state(State next_state) {
         {
             m_prev_moving_direction = m_moving_direction;
             hardware_command_movement(HARDWARE_MOVEMENT_STOP);
+
+            hardware_command_door_open(1);
 
             g_current_state = STAYING;
             break;

@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @brief Implementation of module for commanding lights.
+ */
+
+
 #include "lights.h"
 #include "hardware.h"
 
