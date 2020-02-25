@@ -5,9 +5,12 @@
 
 
 #include "fsm.h"
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 
-State g_current_state; ///< Current state of the FSM.
+static State m_current_state; ///< Current state of the FSM.
 
 static HardwareMovement m_moving_direction; ///< Current moving direction. Is not set to HARDWARE_MOVEMENT_STOP when the elevator stops.
 static HardwareMovement m_prev_moving_direction; ///< Previous moving direction.
@@ -15,6 +18,65 @@ static HardwareMovement m_prev_moving_direction; ///< Previous moving direction.
 static int m_current_floor; ///< Current floor the elevator is on. Set to FSM_NOT_ON_FLOOR (-1) while not on floor.
 static int m_prev_floor; ///< Last defined floor the elevator was on.
 static int m_above_prev_floor; ///< Truthy value (1) if the elevator is above prev_floor, and a non-truthy value (0) if else.
+
+
+static void sigint_handler(int sig){
+    (void)(sig);
+    printf("Terminating elevator\n");
+    hardware_command_movement(HARDWARE_MOVEMENT_STOP);
+    exit(0);
+}
+
+
+int main(){
+    int error = hardware_init();
+    if(error != 0){
+        fprintf(stderr, "Unable to initialize hardware\n");
+        exit(1);
+    }
+
+    signal(SIGINT, sigint_handler);
+
+
+    fsm_initialize();
+    
+    
+    while(1) {
+        switch (m_current_state)
+        {
+            case MOVING:
+            {
+                fsm_in_state_moving();
+                break;
+            }
+
+            case STAYING:
+            {
+                fsm_in_state_staying();
+                break;
+            }
+
+            case IDLE:
+            {
+                fsm_in_state_idle();
+                break;
+            }
+
+            case EMERGENCY_STOP:
+            {
+                fsm_in_state_emergency_stop();
+                break;
+            }
+
+            default:
+                fprintf(stderr, "Undefined state");
+                exit(2);
+                break;
+        }
+    }
+
+    return 0;
+}
 
  
 void fsm_in_state_moving() {
@@ -202,7 +264,7 @@ void fsm_transition_to_state(State next_state) {
         {
             hardware_command_movement(m_moving_direction);
 
-            g_current_state = MOVING;
+            m_current_state = MOVING;
 
             break;
         }
@@ -213,12 +275,12 @@ void fsm_transition_to_state(State next_state) {
 
             hardware_command_door_open(1);
 
-            g_current_state = STAYING;
+            m_current_state = STAYING;
             break;
         }
         case IDLE:
         {
-            g_current_state = IDLE;
+            m_current_state = IDLE;
             break;
         }
         case EMERGENCY_STOP:
@@ -231,7 +293,7 @@ void fsm_transition_to_state(State next_state) {
             queue_clear();
             lights_clear_all_order_lights();
 
-            g_current_state = EMERGENCY_STOP;
+            m_current_state = EMERGENCY_STOP;
             break;
         }
         default:
@@ -258,7 +320,7 @@ void fsm_initialize() {
                 timer_set(0);
                 lights_clear_all_order_lights();
 
-                g_current_state = IDLE;
+                m_current_state = IDLE;
                 return;
             }
         }

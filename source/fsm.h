@@ -8,8 +8,6 @@
 #include "queue.h"
 #include "lights.h"
 #include "timer.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 
 #ifndef FSM_H
@@ -30,7 +28,7 @@ typedef enum {
 
 
 /**
- * @brief Main program of the project, runs the finite state machine. Implemented in @c main.c.
+ * @brief Main program of the project, runs the finite state machine.
  * 
  * @return 0 on success, truthy integer values if errors occur.
  */
