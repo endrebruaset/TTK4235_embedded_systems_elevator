@@ -318,7 +318,7 @@ void fsm_initialize() {
 
                 queue_initialize();
                 timer_set(0);
-                lights_clear_all_order_lights();
+                fsm_clear_all_order_lights();
 
                 m_current_state = IDLE;
                 return;

@@ -21,7 +21,6 @@ typedef enum {
 } QueueOrder;
 
 
-
 /**
  * @brief Data structure to be used in @c m_inside_queue, to keep track of orders from inside the elevator.
  */ 

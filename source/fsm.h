@@ -6,7 +6,6 @@
 
 #include "hardware.h"
 #include "queue.h"
-#include "lights.h"
 #include "timer.h"
 
 
