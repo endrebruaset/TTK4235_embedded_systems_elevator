@@ -36,7 +36,7 @@ typedef struct {
 typedef struct {
     int from_floor;             ///< Floor the order is made from.
     int active;                 ///< 1 if order exists, 0 if not.
-    QueueOrder direction;    ///< Direction of the order.
+    QueueOrder direction;       ///< Direction of the order.
 } OutsideOrder;
 
 
