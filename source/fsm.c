@@ -28,7 +28,7 @@ static void sigint_handler(int sig){
 }
 
 
-int main(){
+int main() {
     int error = hardware_init();
     if(error != 0){
         fprintf(stderr, "Unable to initialize hardware\n");
@@ -291,7 +291,7 @@ void fsm_transition_to_state(State next_state) {
             hardware_command_movement(HARDWARE_MOVEMENT_STOP);
 
             queue_clear();
-            lights_clear_all_order_lights();
+            fsm_clear_all_order_lights();
 
             m_current_state = EMERGENCY_STOP;
             break;
@@ -361,5 +361,21 @@ void fsm_remove_orders_and_clear_order_lights(int floor) {
         HardwareOrder type = order_types[i];
         queue_remove_order(floor, (QueueOrder) type);
         hardware_command_order_light(floor, type, 0);
+    }
+}
+
+
+void fsm_clear_all_order_lights() {
+    HardwareOrder order_types[HARDWARE_NUMBER_OF_ORDER_TYPES] = {
+        HARDWARE_ORDER_UP,
+        HARDWARE_ORDER_INSIDE,
+        HARDWARE_ORDER_DOWN
+    };
+
+    for(int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; f++){
+        for(int i = 0; i < HARDWARE_NUMBER_OF_ORDER_TYPES; i++){
+            HardwareOrder type = order_types[i];
+            hardware_command_order_light(f, type, 0);
+        }
     }
 }

@@ -92,4 +92,10 @@ void fsm_read_orders_and_set_order_lights();
 void fsm_remove_orders_and_clear_order_lights(int floor);
 
 
+/**
+ * @brief Clears all order lights.  
+ */
+void fsm_clear_all_order_lights();
+
+
 #endif

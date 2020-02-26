@@ -1,7 +1,8 @@
 /**
  * @file
  * @brief Constants to be used in the queue module, 
- * defined through the constant defined in @c hardware.h.
+ * defined through the constant HARDWARE_NUMBER_OF_FLOORS
+ * defined in @c hardware.h.
  */
 
 
