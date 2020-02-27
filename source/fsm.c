@@ -1,9 +1,3 @@
-/**
- * @file
- * @brief Implementation of the finite state machine.
- */
-
-
 #include "fsm.h"
 #include <signal.h>
 #include <stdio.h>

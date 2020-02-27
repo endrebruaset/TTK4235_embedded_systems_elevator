@@ -1,10 +1,5 @@
-/**
- * @file
- * @brief Implementation of module for queueing orders for the elevator.
- */
-
-
 #include "queue.h"
+#include "queue_constants.h"
 
 
 static InsideOrder m_inside_queue[QUEUE_INSIDE_QUEUE_SIZE]; ///< Queue containing all possible orders from inside the elevator.

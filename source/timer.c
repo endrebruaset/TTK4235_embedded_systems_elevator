@@ -1,13 +1,7 @@
-/**
- * @file
- * @brief Implementation of module for timing events.
- */
-
-
 #include "timer.h"
 
 
-static Timer m_timer; ///< Timer to be used to time events.
+static Timer m_timer; ///< Timer variable to save the current time and latest trigger value.
 
 
 void timer_set(int seconds) {

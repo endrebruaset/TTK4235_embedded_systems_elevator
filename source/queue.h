@@ -4,9 +4,6 @@
  */
 
 
-#include "queue_constants.h"
-
-
 #ifndef QUEUE_H
 #define QUEUE_H
 
@@ -22,7 +19,7 @@ typedef enum {
 
 
 /**
- * @brief Data structure to be used in @c m_inside_queue, to keep track of orders from inside the elevator.
+ * @brief Data structure to be used to represent orders from inside the elevator.
  */ 
 typedef struct {
     int to_floor;       ///< Desired floor of order.
@@ -31,7 +28,7 @@ typedef struct {
 
 
 /**
- * @brief Data structure to be used in @c m_outside_queue, to keep track of orders from outside the elevator.
+ * @brief Data structure to be used to represent orders from outside the elevator.
  */ 
 typedef struct {
     int from_floor;             ///< Floor the order is made from.
@@ -41,36 +38,34 @@ typedef struct {
 
 
 /**
- * @brief Initializes @c m_inside_queue and @c m_outside_queue by inserting all possible combinations of
+ * @brief Initializes the queue by inserting all possible combinations of
  * order types and floors, with the @c active member set to 0.
  */
 void queue_initialize();
 
 
 /**
- * @brief Clears all orders from @c m_inside_queue and @c m_outside_queue, by setting the @c active element to
+ * @brief Clears all orders from the queue by setting the @c active element to
  * an untruthy value (0) in all the orders.
  */ 
 void queue_clear();
 
 
 /**
- * @brief Adds order to @c m_inside_queue or @c m_outside_queue by setting the @c active element
+ * @brief Adds order to the queue by setting the @c active element
  * to a truthy value (1) in the order corresponding to the input parameters.
  * 
  * @param floor Desired floor for inside orders, and floor the order is made from for outside orders.
- * 
  * @param order_type Type of order.
  */ 
 void queue_add_order(int floor, QueueOrder order_type);
 
 
 /**
- * @brief Removes order from @c m_inside_queue or @c m_outside_queue by setting the @c active element
+ * @brief Removes order from the queue by setting the @c active element
  * to a non-truthy value (0) in the order corresponding to the input parameters.
  * 
  * @param floor Desired floor for inside orders, and floor the order is made from for outside orders.
- * 
  * @param order_type Type of order.
  */ 
 void queue_remove_order(int floor, QueueOrder order_type);
@@ -80,7 +75,6 @@ void queue_remove_order(int floor, QueueOrder order_type);
  * @brief Checks if there is an active order on @p floor of type @p order_type.
  * 
  * @param floor Floor to check for order.
- * 
  * @param order_type Type of order. 
  * 
  * @return 1 if the order of type @p type to or from floor @p floor is active, 0 if not.
