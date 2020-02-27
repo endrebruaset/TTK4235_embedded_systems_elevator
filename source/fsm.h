@@ -1,7 +1,21 @@
 /**
  * @file
  * @brief Finite state machine that keeps track of which state the elevator is in, 
- * and performs the corresponding actions and transition. 
+ * and performs the corresponding actions and transition.
+ * 
+ * \mainpage Elevator Project - TTK4235
+ *      \section Introduction
+ * Documentation of an implementation of a control system controlling an elevator, as a project in the course TTK4235. 
+ * The documentation includes an overview of the different modules. Note that the source files also have documentations,
+ * to show the different module restricted variables used.
+ * 
+ *      \section About the Architecture Design
+ * The elevator control system is implemented by modeling the elevator as a Finite State Machine (FSM). The interface to
+ * the elevator hardware was pre-made, and is documented in @c harware.h. The remaining necessary functionalities were 
+ * added through the queue and timer modules.
+ * 
+ *      \authors Endre Bruaset and Nina Nyegaarden
+ *
  */
 
 
