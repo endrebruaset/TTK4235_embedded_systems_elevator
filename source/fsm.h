@@ -1,8 +1,4 @@
 /**
- * @file
- * @brief Finite state machine that keeps track of which state the elevator is in, 
- * and performs the corresponding actions and transition.
- * 
  * \mainpage Elevator Project - TTK4235
  *      \section Introduction
  * Documentation of an implementation of a control system controlling an elevator, as a project in the course TTK4235. 
@@ -15,7 +11,13 @@
  * added through the queue and timer modules.
  * 
  *      \authors Endre Bruaset and Nina Nyegaarden
- *
+ */
+
+
+/**
+ * @file
+ * @brief Finite state machine that keeps track of which state the elevator is in, 
+ * and performs the corresponding actions and transition.
  */
 
 
