@@ -1,6 +1,7 @@
 /**
  * @file
- * @brief Finite state machine that keeps track of which state the elevator is in, and performs the corresponding actions and transition. 
+ * @brief Finite state machine that keeps track of which state the elevator is in, 
+ * and performs the corresponding actions and transition. 
  */
 
 
@@ -69,7 +70,7 @@ void fsm_transition_to_state(State next_state);
 /**
  * @brief Initializes the FSM, by moving downwards until a floor is reached.
  * Ignores all orders and commands until it reaches a defined state. Sets
- * all data members depending on floor, initializes queue and the timer,
+ * all data members depending on floor, initializes queue and timer, 
  * then enters state @c IDLE. 
  */
 void fsm_initialize();
@@ -84,9 +85,10 @@ void fsm_read_orders_and_set_order_lights();
 
 
 /**
- * @brief Removes all executed orders from the queue, and clears the corresponding order lights.
+ * @brief Removes all executed orders at floor @p floor from the queue, 
+ * and clears the corresponding order lights.
  * 
- * @param floor Floor at which the orders are executed.
+ * @param floor Floor at which orders are executed and need removal from queue.
  */
 void fsm_remove_orders_and_clear_order_lights(int floor);
 

@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief Implementation of finite state machine that keeps track of which state the elevator is in, and performs the corresponding actions and transition. 
+ * @brief Implementation of the finite state machine.
  */
 
 
@@ -17,7 +17,7 @@ static HardwareMovement m_prev_moving_direction; ///< Previous moving direction.
 
 static int m_current_floor; ///< Current floor the elevator is on. Set to FSM_NOT_ON_FLOOR (-1) while not on floor.
 static int m_prev_floor; ///< Last defined floor the elevator was on.
-static int m_above_prev_floor; ///< Truthy value (1) if the elevator is above prev_floor, and a non-truthy value (0) if else.
+static int m_above_prev_floor; ///< Truthy value (1) if the elevator is above the previous floor, and a non-truthy value (0) if not.
 
 
 static void sigint_handler(int sig){
