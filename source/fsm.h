@@ -1,7 +1,7 @@
 /**
  * \mainpage Elevator Project - TTK4235
  * 
- * Documentation of implementation of a control system controlling an elevator, as a project in the course TTK4235. 
+ * Implementation of a control system controlling an elevator, as a project in the course TTK4235. 
  * The documentation includes an overview of the different modules, and the public APIs used. The elevator control system 
  * is implemented by modeling the elevator as a Finite State Machine (FSM). The interface to the elevator hardware was pre-made, 
  * and is documented in @c hardware.h. The remaining necessary functionalities were added through the queue and timer modules.
