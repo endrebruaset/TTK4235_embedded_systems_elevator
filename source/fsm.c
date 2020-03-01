@@ -169,7 +169,7 @@ void fsm_in_state_staying() {
 
 
 void fsm_in_state_idle() {
-    // if door is open, becuase previous state was emergency_stop and the elevator is on a floor
+    // if door is open
     if (!timer_is_elapsed()) {
         while (!timer_is_elapsed()) {
             if (hardware_read_stop_signal()) {

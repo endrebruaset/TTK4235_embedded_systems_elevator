@@ -15,8 +15,8 @@
  * @brief Data structure to be used to time events.
  */
 typedef struct {
-    time_t value; ///< The current time, valued in seconds.
-    time_t trigger; ///< The limit the timer needs to reach to elapse, valued in seconds.
+    time_t value;       ///< The current time, valued in seconds.
+    time_t trigger;     ///< The limit the timer needs to reach to elapse, valued in seconds.
 } Timer;
 
 
@@ -30,8 +30,8 @@ void timer_set(int seconds);
 
 
 /**
- * @brief Checks if the timer has elapsed, by checking if the current time @c Timer.value 
- * is larger than the the trigger @c Timer.trigger.
+ * @brief Checks if the timer has elapsed, by checking if the current time 
+ * is larger than the the trigger.
  * 
  * @return 1 if the timer has elapsed, 0 if not.
  */

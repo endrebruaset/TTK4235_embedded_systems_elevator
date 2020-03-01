@@ -72,7 +72,8 @@ void fsm_in_state_emergency_stop();
 
 
 /**
- * @brief Executes entry actions in transition from @c m_current_state to @p next_state.
+ * @brief Changes the current state to @p next_state, and executes entry actions 
+ * in transition to @p next_state.
  * 
  * @param next_state State being transitioned to.
  */
