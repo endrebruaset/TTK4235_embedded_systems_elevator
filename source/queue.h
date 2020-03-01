@@ -78,8 +78,6 @@ void queue_remove_order(int floor, QueueOrder order_type);
  * @param order_type Type of order. 
  * 
  * @return 1 if the order of type @p type to or from floor @p floor is active, 0 if not.
- * 
- * @warning Returns 0 if the combination of @p floor and @p order_type is invalid.
  */
 
 int queue_check_order(int floor, QueueOrder order_type);
