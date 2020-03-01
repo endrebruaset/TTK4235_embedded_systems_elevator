@@ -17,11 +17,6 @@
  */
 
 
-#include "hardware.h"
-#include "queue.h"
-#include "timer.h"
-
-
 #ifndef FSM_H
 #define FSM_H
 #define FSM_NOT_ON_FLOOR -1

@@ -1,4 +1,7 @@
 #include "fsm.h"
+#include "hardware.h"
+#include "queue.h"
+#include "timer.h"
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
