@@ -48,7 +48,11 @@ void queue_clear() {
 
 void queue_add_order(int floor, QueueOrder order_type) {
     if (order_type == QUEUE_ORDER_INSIDE) {
-        m_inside_queue[floor].active = 1;
+        for (int i = 0; i < QUEUE_INSIDE_QUEUE_SIZE; i++) {
+            if (m_inside_queue[i].to_floor == floor) {
+                m_inside_queue[i].active = 1;
+            }
+        }
     }
 
     else {
@@ -63,7 +67,11 @@ void queue_add_order(int floor, QueueOrder order_type) {
 
 void queue_remove_order(int floor, QueueOrder order_type) {
     if (order_type == QUEUE_ORDER_INSIDE) {
-        m_inside_queue[floor].active = 0;
+        for (int i = 0; i < QUEUE_INSIDE_QUEUE_SIZE; i++) {
+            if (m_inside_queue[i].to_floor == floor) {
+                m_inside_queue[i].active = 0;
+            }
+        }
     }
 
     else {
@@ -78,7 +86,11 @@ void queue_remove_order(int floor, QueueOrder order_type) {
 
 int queue_check_order(int floor, QueueOrder order_type) {
     if (order_type == QUEUE_ORDER_INSIDE) {
-        return m_inside_queue[floor].active;
+        for (int i = 0; i < QUEUE_INSIDE_QUEUE_SIZE; i++) {
+            if (m_inside_queue[i].to_floor == floor) {
+                return m_inside_queue[i].active;
+            }
+        }
     }
 
     else {
